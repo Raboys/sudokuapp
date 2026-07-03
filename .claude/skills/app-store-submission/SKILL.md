@@ -27,8 +27,17 @@ attach a build, upload screenshots, create a review submission, and **submit for
 - **App Privacy "nutrition label"** (`appDataUsages`). There is **no public API** — the
   app resource exposes no `appDataUsages` relationship; every path 404s. Set it in the UI:
   *App Privacy → Get Started → "No, we do not collect data" (if true) → Publish*.
-- **Age rating / content rights** declarations are also effectively UI-only.
 - **Deleting an empty draft review submission** returns 403 — harmless, leave or delete in UI.
+
+**Age rating IS settable via API** (field-tested 2026-07; earlier versions of this doc said
+UI-only). The declaration hangs off **appInfos**, not appStoreVersions:
+`GET /v1/apps/{id}/appInfos` → pick the PREPARE_FOR_SUBMISSION record →
+`GET /v1/appInfos/{id}/ageRatingDeclaration` → `PATCH /v1/ageRatingDeclarations/{id}` with
+`ageRatingOverrideV2` (`NONE` | `THIRTEEN_PLUS` | `SIXTEEN_PLUS` | `EIGHTEEN_PLUS` — the new
+4/9/13/16/18 tier system). Don't also send legacy `ageRatingOverride` — that 409s
+(`AGE_RATING_OVERRIDE_V1_AND_V2_NOT_ALLOWED`); setting only V2 auto-syncs V1.
+`ageAssurance: false` = no ID/age-verification prompt (the 18+ override is what triggers it).
+App Review notes (`appStoreReviewDetails`) remain PATCHable even after submitting for review.
 
 Plan for one short UI visit per app for the App Privacy publish. Everything else is scriptable.
 
@@ -134,6 +143,17 @@ review the Development→Production diff and **Deploy**.
 
 ## Gotchas (the time-savers)
 
+- **`exportArchive` fails with "Cloud signing permission error" + "No profiles found"** on a
+  headless export, even with `-allowProvisioningUpdates` and API-key auth (the key may not use
+  the cloud-managed distribution cert). Fix entirely via API: look up the bundle-id resource
+  (`GET /v1/bundleIds?filter[identifier]=…`); match the local **Apple Distribution** cert to
+  its ASC record by serial (`security find-certificate -c "Apple Distribution" -p | openssl
+  x509 -noout -serial` vs `GET /v1/certificates?filter[certificateType]=DISTRIBUTION`);
+  `POST /v1/profiles` with `profileType: IOS_APP_STORE`; base64-decode `profileContent` into
+  `~/Library/MobileDevice/Provisioning Profiles/`; then export with a **manual** ExportOptions
+  (`signingStyle: manual`, `signingCertificate: Apple Distribution`,
+  `provisioningProfiles: {bundleId: profileName}`). The **archive** step works fine with
+  `-allowProvisioningUpdates -authenticationKeyPath/-KeyID/-KeyIssuerID`.
 - **iPhone 6.5" screenshot demanded for an iPad-only app.** The API submission validator
   spuriously requires an `APP_IPHONE_65` screenshot even when the binary is `UIDeviceFamily=2`.
   The **web UI** usually won't ask, but the **API** will. Fastest unblock: generate valid
@@ -260,8 +280,8 @@ Team ID:         GU9WTSTX9M               # Tertiary Infotech (paid) — same te
 Platform:        iOS 16+ (iPhone only, TARGETED_DEVICE_FAMILY=1)
 Category:        Games (primary subcategory: Puzzle; secondary: Board)
 Price:           Free
-Age rating:      18+ — see the note below
-Version / Build: 1.0 / 1                   # bump CFBundleVersion on every upload
+Age rating:      13+ (ageRatingOverrideV2=THIRTEEN_PLUS; in-app gate says 14+) — see below
+Version / Build: 1.1 / 3                   # bump CFBundleVersion on every upload
 ```
 
 > Project-specific notes for Sudoku:
@@ -270,14 +290,13 @@ Version / Build: 1.0 / 1                   # bump CFBundleVersion on every uploa
 > - **No permissions** — the app requests no location/camera/mic, so there are no usage strings
 >   to add. App Privacy → **Data Not Collected** (scores/history stay on-device in UserDefaults).
 > - **No CloudKit** — skip the "CloudKit Production schema deploy" step entirely.
-> - **18+ age rating (UI-only).** Age rating is set in App Store Connect, not via API:
->   *App Information → Age Rating → Edit*. To reach **18+**, answer the questionnaire so the
->   computed rating lands at 17+/18+ — the simplest honest route is to declare
->   **"Unrestricted Web Access" = No** but set **"Gambling and Contests"** / **"Mature/Suggestive
->   Themes"** appropriately, or use the **"Age Verification — 18+"** self-declaration that the
->   current questionnaire exposes. The app itself also shows a one-time in-app **18+ age gate**
->   on first launch (`AgeGateView`), which reviewers see immediately. Mention the gate in the
->   App Review notes so the rating is clearly intentional.
+> - **Age rating 13+ via API (since v1.1).** All content descriptors are NONE; the rating is
+>   pinned with `ageRatingOverrideV2 = THIRTEEN_PLUS` on the appInfo's ageRatingDeclaration
+>   (see the API note near the top). v1.0 shipped with the 18+ override
+>   (`EIGHTEEN_PLUS`), which is what triggered Apple's age/ID-verification behaviour — removed
+>   in v1.1. The app shows a one-time in-app **14+ age gate** on first launch (`AgeGateView`,
+>   single tap, no ID); mention it in the App Review notes so the 13+ rating reads as
+>   intentional.
 > - Pre-flight already done in-repo: 1024 icon (no alpha), `ITSAppUsesNonExemptEncryption=false`,
 >   `UIRequiredDeviceCapabilities=arm64`, `PrivacyInfo.xcprivacy`, `ExportOptions.plist`.
 
