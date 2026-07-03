@@ -1,9 +1,9 @@
 import SwiftUI
 
 /// Score history and lifetime stats, read from the on-device `ScoreStore`.
+/// Lives in its own bottom tab so scores and times are always one tap away.
 struct StatsView: View {
     @EnvironmentObject private var viewModel: GameViewModel
-    @Environment(\.dismiss) private var dismiss
 
     @State private var sessions: [GameSession] = []
     @State private var stats: ScoreStore.Stats?
@@ -60,16 +60,13 @@ struct StatsView: View {
                 }
             }
             .navigationTitle("Statistics")
-            .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
-                    Button("Done") { dismiss() }
-                }
                 if !sessions.isEmpty {
                     ToolbarItem(placement: .topBarTrailing) {
                         Button(role: .destructive) { showClearConfirm = true } label: {
                             Image(systemName: "trash")
                         }
+                        .accessibilityLabel("Clear history")
                     }
                 }
             }

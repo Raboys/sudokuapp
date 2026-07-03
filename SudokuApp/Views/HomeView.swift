@@ -1,10 +1,9 @@
 import SwiftUI
 
 /// Landing screen: continue a saved game, pick a difficulty for a new game, and
-/// reach the stats and settings screens.
+/// reach the settings screen. Stats live in their own tab.
 struct HomeView: View {
     @EnvironmentObject private var viewModel: GameViewModel
-    @State private var showStats = false
     @State private var showSettings = false
 
     var body: some View {
@@ -33,12 +32,6 @@ struct HomeView: View {
             .background(Color(.systemGroupedBackground))
             .navigationTitle("Sudoku")
             .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
-                    Button { showStats = true } label: {
-                        Image(systemName: "chart.bar.fill")
-                    }
-                    .accessibilityLabel("Statistics")
-                }
                 ToolbarItem(placement: .topBarTrailing) {
                     Button { showSettings = true } label: {
                         Image(systemName: "gearshape.fill")
@@ -46,7 +39,6 @@ struct HomeView: View {
                     .accessibilityLabel("Settings")
                 }
             }
-            .sheet(isPresented: $showStats) { StatsView() }
             .sheet(isPresented: $showSettings) { SettingsView() }
         }
     }
@@ -76,7 +68,7 @@ struct HomeView: View {
                     Text("Continue")
                         .font(.headline)
                         .foregroundStyle(.primary)
-                    Text("Resume your game in progress")
+                    Text(continueSubtitle)
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
                 }
@@ -87,6 +79,15 @@ struct HomeView: View {
             .background(Color(.secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 16))
         }
         .buttonStyle(.plain)
+    }
+
+    /// e.g. "Medium · 03:42" for the saved game, so the player knows what they
+    /// are coming back to before tapping.
+    private var continueSubtitle: String {
+        if let saved = viewModel.savedGameSummary {
+            return "\(saved.difficulty.title) · \(saved.elapsed)"
+        }
+        return "Resume your game in progress"
     }
 }
 

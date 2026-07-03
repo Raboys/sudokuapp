@@ -4,8 +4,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 A native SwiftUI Sudoku game for iPhone, built to ship on the App Store. Puzzles are
 generated on-device with a guaranteed unique solution. Four difficulty levels, smart hints,
-pencil notes, scoring, and full game history kept locally. Rated **18+** with an in-app age
-gate. Modelled on the structure and conventions of the RunTrack GPS app.
+pencil notes, scoring, and full game history kept locally. Intended for ages **14+** with a
+one-tap in-app age gate (no ID / verification). Bottom tab nav: Home · Stats · Feedback
+(WhatsApp) · About. Modelled on the structure and conventions of the RunTrack GPS app.
 
 ## Build & run
 
@@ -21,7 +22,7 @@ xcodebuild -project SudokuApp.xcodeproj -scheme SudokuApp \
   -destination 'platform=iOS Simulator,name=iPhone 17' build
 ```
 
-Run in the simulator and screenshot (the home/game screens sit behind the one-time 18+ gate):
+Run in the simulator and screenshot (the home/game screens sit behind the one-time 14+ gate):
 
 ```bash
 xcrun simctl boot "iPhone 17"
@@ -55,10 +56,11 @@ SudokuApp/
     ScoreCalculator.swift        score = base + speed bonus − hint/mistake penalties
     ScoreStore.swift             UserDefaults JSON persistence: sessions + active game + stats
   ViewModels/
-    GameViewModel.swift          board state, timer, hints, undo, settings, 18+ gate
+    GameViewModel.swift          board state, timer, hints, undo, settings, 14+ gate
   Views/
-    RootView, AgeGateView, HomeView, GameView, BoardView,
-    CompletionView, StatsView, SettingsView
+    RootView, MainTabView (Home·Stats·Feedback·About tabs), AgeGateView,
+    HomeView, GameView, BoardView, CompletionView, StatsView,
+    SettingsView, FeedbackView (WhatsApp wa.me), AboutView
   Resources/Assets.xcassets      AppIcon (1024, no alpha) + AccentColor
   Support/Info.plist, PrivacyInfo.xcprivacy
 ```
@@ -72,8 +74,9 @@ SudokuApp/
   and increments the hint tally, which lowers the final score.
 - **Persistence**: every move saves an `ActiveGame` so the player can quit and **Continue**;
   finished games append a `GameSession`. Nothing leaves the device.
-- **18+ gate**: `AgeGateView` shows once on first launch; the choice is stored in UserDefaults
-  (`SudokuApp.ageConfirmed`). The App Store age rating is also set to 18+ (UI-only in ASC).
+- **14+ gate**: `AgeGateView` shows once on first launch — a single self-declaration tap, no
+  ID or verification; the choice is stored in UserDefaults (`SudokuApp.ageConfirmed`). The
+  App Store age rating is **13+** (nearest Apple tier admitting 14-year-olds; set in the ASC UI).
 
 ## Conventions
 
@@ -85,6 +88,6 @@ SudokuApp/
 
 See the `app-store-submission` skill (`.claude/skills/app-store-submission/`). Pre-flight is
 done in-repo (icon without alpha, `ITSAppUsesNonExemptEncryption=false`, `arm64`,
-`PrivacyInfo.xcprivacy`, `ExportOptions.plist`). Remember the **18+ age rating** is set in the
+`PrivacyInfo.xcprivacy`, `ExportOptions.plist`). Remember the **13+ age rating** is set in the
 App Store Connect UI. Regenerate the icon with
 `swift .claude/skills/app-store-submission/scripts/make_sudoku_icon.swift <out.png>`.

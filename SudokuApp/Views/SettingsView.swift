@@ -25,7 +25,7 @@ struct SettingsView: View {
 
                 Section("About") {
                     LabeledContent("Version", value: appVersion)
-                    LabeledContent("Age rating", value: "18+")
+                    LabeledContent("Age rating", value: "14+")
                     Text("Sudoku puzzles are generated on your device with a guaranteed unique solution. Scores and history are stored only on this iPhone and never leave it.")
                         .font(.footnote)
                         .foregroundStyle(.secondary)

@@ -94,6 +94,10 @@ private struct CellView: View {
             }
         }
         .frame(width: size, height: size)
+        .overlay(
+            Rectangle()
+                .strokeBorder(Color.accentColor, lineWidth: isSelected ? 2.5 : 0)
+        )
     }
 
     private var background: some View {

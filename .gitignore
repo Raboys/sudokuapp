@@ -34,3 +34,7 @@ build/
 # Playwright MCP artifacts + ASC debug screenshots (not part of the app)
 .playwright-mcp/
 /asc-*.png
+
+# local skill credentials + caches — never commit
+.claude/skills/ios-auto-release/org-credentials.env
+__pycache__/

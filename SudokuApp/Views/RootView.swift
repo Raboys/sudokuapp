@@ -1,7 +1,8 @@
 import SwiftUI
 
-/// Top-level router. Shows the 18+ age gate until confirmed, then switches between
-/// the home, game, and completion screens.
+/// Top-level router. Shows the 14+ age gate until confirmed, then switches between
+/// the tabbed home experience, the game, and the completion screen. The game and
+/// completion screens are full-screen (no tab bar) so the board gets all the space.
 struct RootView: View {
     @EnvironmentObject private var viewModel: GameViewModel
 
@@ -11,7 +12,7 @@ struct RootView: View {
                 AgeGateView()
             } else {
                 switch viewModel.screen {
-                case .home:       HomeView()
+                case .home:       MainTabView()
                 case .game:       GameView()
                 case .completion: CompletionView()
                 }

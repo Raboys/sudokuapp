@@ -1,5 +1,6 @@
 import SwiftUI
 import Combine
+import UIKit
 
 /// The single source of truth for the running game and all navigation. Holds the
 /// board, the timer, hint/mistake bookkeeping, settings, and persists both the
@@ -11,9 +12,9 @@ final class GameViewModel: ObservableObject {
     @Published var screen: AppScreen = .home
     @Published var activeAlert: GameAlert?
 
-    // MARK: 18+ gate
-    /// The app is rated 18+. The user must confirm their age once; the choice is
-    /// remembered on-device.
+    // MARK: 14+ gate
+    /// The app is intended for ages 14 and over. The user self-declares once with a
+    /// single tap (no ID, no verification); the choice is remembered on-device.
     @Published var isAgeConfirmed: Bool {
         didSet { defaults.set(isAgeConfirmed, forKey: Keys.ageConfirmed) }
     }
@@ -68,6 +69,13 @@ final class GameViewModel: ObservableObject {
     // MARK: - Derived state
 
     var hasResumableGame: Bool { store.loadActiveGame() != nil }
+
+    /// Difficulty and elapsed time of the saved game, for the home screen's Continue card.
+    var savedGameSummary: (difficulty: Difficulty, elapsed: String)? {
+        guard let game = store.loadActiveGame() else { return nil }
+        let m = game.elapsedSeconds / 60, s = game.elapsedSeconds % 60
+        return (game.difficulty, String(format: "%02d:%02d", m, s))
+    }
 
     var isGiven: [Bool] { puzzle.map { $0 != 0 } }
 
@@ -148,15 +156,18 @@ final class GameViewModel: ObservableObject {
         if isNotesMode {
             if notes[idx].contains(digit) { notes[idx].remove(digit) } else { notes[idx].insert(digit) }
             values[idx] = 0
+            hapticTap()
         } else {
             // Tapping the same digit again clears the cell.
             if values[idx] == digit {
                 values[idx] = 0
+                hapticTap()
             } else {
                 values[idx] = digit
                 notes[idx].removeAll()
                 registerMistakeIfNeeded(at: idx, digit: digit)
                 if autoRemoveNotes { pruneNotes(around: idx, digit: digit) }
+                if digit == solution[idx] { hapticTap() }
             }
         }
         persistActiveGame()
@@ -208,6 +219,7 @@ final class GameViewModel: ObservableObject {
     private func checkForWin() {
         guard isSolved else { return }
         stopTimer()
+        UINotificationFeedbackGenerator().notificationOccurred(.success)
         let score = ScoreCalculator.score(difficulty: difficulty,
                                           seconds: elapsedSeconds,
                                           hintsUsed: hintsUsed,
@@ -227,6 +239,7 @@ final class GameViewModel: ObservableObject {
     private func registerMistakeIfNeeded(at idx: Int, digit: Int) {
         guard digit != solution[idx] else { return }
         mistakes += 1
+        UINotificationFeedbackGenerator().notificationOccurred(.error)
         if limitMistakes && mistakes >= mistakeLimit {
             stopTimer()
             activeAlert = GameAlert(
@@ -241,6 +254,10 @@ final class GameViewModel: ObservableObject {
     }
 
     // MARK: - Helpers
+
+    private func hapticTap() {
+        UIImpactFeedbackGenerator(style: .light).impactOccurred()
+    }
 
     private func recordUndo(_ idx: Int) {
         undoStack.append((idx, values[idx], notes[idx]))

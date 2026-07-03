@@ -150,13 +150,13 @@ private struct NumberPad: View {
                 Button { onTap(digit) } label: {
                     VStack(spacing: 2) {
                         Text("\(digit)")
-                            .font(.system(size: 26, weight: .semibold, design: .rounded))
+                            .font(.system(size: 28, weight: .semibold, design: .rounded))
                         Text(remaining > 0 ? "\(remaining)" : " ")
-                            .font(.system(size: 10))
+                            .font(.system(size: 11))
                             .foregroundStyle(.secondary)
                     }
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 10)
+                    .frame(maxWidth: .infinity, minHeight: 56)
+                    .padding(.vertical, 6)
                     .background(Color(.secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 10))
                 }
                 .buttonStyle(.plain)
