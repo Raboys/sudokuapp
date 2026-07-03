@@ -14,7 +14,7 @@ the gitignored `.env`; this file holds the public-facing copy and asset location
 | Platform | iOS 16+, iPhone only (portrait) |
 | Primary category | Games → Puzzle (secondary: Board) |
 | Price | Free |
-| **Age rating** | **18+** — set in the ASC UI (Age Rating questionnaire); the app also shows a one-time in-app 18+ gate |
+| **Age rating** | **13+** — set via API (`ageRatingOverrideV2 = THIRTEEN_PLUS` on the appInfo ageRatingDeclaration); the app also shows a one-time in-app 14+ gate (single tap, no ID/verification) |
 
 ## Marketing copy
 
@@ -45,9 +45,10 @@ the gitignored `.env`; this file holds the public-facing copy and asset location
 
 ## App Review notes
 
-> Offline Sudoku puzzle game. No login required, no permissions requested. A one-time 18+ age
-> gate appears on first launch — tap "I am 18 or older" to reach the game. All scores/history
-> are stored locally on device.
+> Offline Sudoku puzzle game. No login required, no permissions requested. A one-time 14+ age
+> gate appears on first launch — tap "I am 14 or older" to reach the game (no ID or
+> verification). Bottom navigation adds Stats (local score/time history), Feedback (opens
+> WhatsApp), and About tabs. All scores/history are stored locally on device.
 
 ## Assets
 
@@ -66,5 +67,5 @@ Regenerate:
 ## Submission
 
 Driven by the `app-store-submission` skill. The 6.9" set (`APP_IPHONE_67`, 1290×2796 or
-1320×2868) is the only required screenshot size. **Age rating (18+) and App Privacy are UI-only**
-in App Store Connect — there is no API for them.
+1320×2868) is the only required screenshot size. **Age rating is API-settable** (PATCH the
+appInfo's ageRatingDeclaration with `ageRatingOverrideV2`); only **App Privacy is UI-only**.

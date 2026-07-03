@@ -6,7 +6,7 @@
 [![Swift](https://img.shields.io/badge/Swift-5.0-FA7343?logo=swift&logoColor=white)](https://swift.org)
 [![SwiftUI](https://img.shields.io/badge/SwiftUI-0A84FF?logo=swift&logoColor=white)](https://developer.apple.com/xcode/swiftui/)
 [![XcodeGen](https://img.shields.io/badge/XcodeGen-2.45-1389FD)](https://github.com/yonaskolb/XcodeGen)
-[![Age Rating](https://img.shields.io/badge/Age%20Rating-18%2B-E4002B)](#)
+[![Age Rating](https://img.shields.io/badge/Ages-14%2B-0D96F6)](#)
 [![App Store](https://img.shields.io/badge/App%20Store-Download-0D96F6?logo=apple&logoColor=white)](https://apps.apple.com/us/app/tertiary-sudoku/id6779973622)
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](#license)
 
@@ -29,10 +29,11 @@
 Tertiary Sudoku is a native **SwiftUI** number‑puzzle game for iPhone, built to ship on the
 App Store. Every puzzle is generated **on‑device** with a mathematically **guaranteed unique
 solution**, so you never run out and never see the same grid twice. It's 100% offline and
-private — scores and history never leave your phone. Rated **18+**.
+private — scores and history never leave your phone. For ages **14+** (one‑tap confirmation,
+no ID or verification).
 
 > Inspired by the Android [sudoku-mobile](https://github.com/alfredang/sudoku-mobile) app,
-> rebuilt natively in Swift and adapted for an 18+ audience.
+> rebuilt natively in Swift.
 
 ### Key features
 
@@ -44,8 +45,11 @@ private — scores and history never leave your phone. Rated **18+**.
 | 🎯 Highlighting | Conflict and same‑number highlighting, both toggleable |
 | 🏆 Scoring & history | Base points + speed bonus − hint/mistake penalties; best times per difficulty |
 | 💾 Local storage | Scores, history and an in‑progress game saved on‑device (`UserDefaults`) |
-| ⏸️ Resume | Quit any time and pick up where you left off |
-| 🔞 18+ age gate | One‑time age confirmation on first launch |
+| ⏸️ Resume | Quit any time and pick up where you left off — the Continue card shows difficulty + time |
+| 🧭 Bottom navigation | Home · Stats · Feedback · About tabs; Stats keeps your scores/times one tap away |
+| 💬 Feedback tab | Send feedback straight to the developers via WhatsApp |
+| 📳 Haptics | Gentle feedback on entries, mistakes, and solves |
+| 🔢 14+ age gate | One‑time, one‑tap age confirmation on first launch — no ID, no verification |
 | 🔒 Private & offline | No network, no permissions, no tracking |
 
 ## Tech Stack
@@ -64,13 +68,13 @@ private — scores and history never leave your phone. Rated **18+**.
 
 ```
 ┌──────────────────────────── SwiftUI Views ────────────────────────────┐
-│  RootView → AgeGate · Home · Game (Board + NumberPad) · Completion      │
-│                         · Stats · Settings                              │
+│  RootView → AgeGate · MainTabView (Home · Stats · Feedback · About)     │
+│           → Game (Board + NumberPad) · Completion · Settings            │
 └───────────────────────────────┬────────────────────────────────────────┘
                                  │  @EnvironmentObject
                        ┌─────────▼──────────┐
                        │   GameViewModel    │   board state · timer · hints
-                       │  (@MainActor OO)   │   undo · settings · 18+ gate
+                       │  (@MainActor OO)   │   undo · settings · 14+ gate
                        └───┬───────────┬────┘
               ┌────────────▼──┐   ┌────▼─────────────┐
               │  SudokuEngine │   │   ScoreStore     │
@@ -90,12 +94,12 @@ sudokuapp/
 │   ├── Engine/                 # SudokuEngine (generate / solve / uniqueness)
 │   ├── Utilities/              # ScoreCalculator, ScoreStore (persistence)
 │   ├── ViewModels/             # GameViewModel
-│   ├── Views/                  # Root, AgeGate, Home, Game, Board, Completion, Stats, Settings
+│   ├── Views/                  # Root, MainTab, AgeGate, Home, Game, Board, Completion, Stats, Settings, Feedback, About
 │   ├── Resources/              # Assets.xcassets (icon + accent colour)
 │   └── Support/                # Info.plist, PrivacyInfo.xcprivacy
 ├── screenshots/                # raw captures + framed App Store images
 ├── scripts/                    # frame_screenshot.swift
-└── .claude/skills/             # app-store-submission + iOS design guideline skills
+└── .claude/skills/             # app-store-submission, ios-auto-release, app-testing + iOS design skills
 ```
 
 ## Getting Started
@@ -128,10 +132,10 @@ xcodebuild -project SudokuApp.xcodeproj -scheme SudokuApp \
 ## App Store Submission
 
 This repo bundles an **App Store submission skill** (`.claude/skills/app-store-submission/`)
-that drives archiving, build upload, metadata, screenshots, and review submission via the
-App Store Connect API + Xcode CLI. See [`STORE_LISTING.md`](STORE_LISTING.md) for the full
-listing copy and asset locations. The 18+ age rating and App Privacy label are set in the
-App Store Connect UI (no public API).
+that drives archiving, build upload, metadata, screenshots, age rating, and review submission
+via the App Store Connect API + Xcode CLI. See [`STORE_LISTING.md`](STORE_LISTING.md) for the
+full listing copy and asset locations. The store age rating is **13+** (set via the API's
+`ageRatingOverrideV2`); only the App Privacy label remains UI‑only.
 
 ## Privacy
 
