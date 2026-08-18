@@ -15,7 +15,7 @@ struct AgeGateView: View {
                 .accessibilityHidden(true)
 
             VStack(spacing: 10) {
-                Text("Sudoku")
+                Text("PochiDoku")
                     .font(.largeTitle.bold())
                 Text("This app is intended for players aged 14 and over.")
                     .font(.body)

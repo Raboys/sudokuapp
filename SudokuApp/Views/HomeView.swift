@@ -30,7 +30,7 @@ struct HomeView: View {
                 .padding(20)
             }
             .background(Color(.systemGroupedBackground))
-            .navigationTitle("Sudoku")
+            .navigationTitle("PochiDoku")
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button { showSettings = true } label: {

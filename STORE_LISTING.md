@@ -1,4 +1,4 @@
-# App Store listing — Sudoku
+# App Store listing — PochiDoku
 
 Everything needed to fill in the App Store Connect product page. Credentials/contact live in
 the gitignored `.env`; this file holds the public-facing copy and asset locations.
@@ -7,10 +7,10 @@ the gitignored `.env`; this file holds the public-facing copy and asset location
 
 | Field | Value |
 |---|---|
-| App name | Sudoku |
-| Bundle ID | `com.tertiaryinfotech.sudokuapp` |
-| Team | Tertiary Infotech (`GU9WTSTX9M`) |
-| Apple account | angchewhoe@gmail.com / Chew Hoe Ang |
+| App name | PochiDoku |
+| Bundle ID | `com.raboys.pochidoku` |
+| Team | Configure the Raboys Apple Developer team in Xcode |
+| Apple account | Configure in App Store Connect |
 | Platform | iOS 16+, iPhone only (portrait) |
 | Primary category | Games → Puzzle (secondary: Board) |
 | Price | Free |
@@ -26,7 +26,7 @@ the gitignored `.env`; this file holds the public-facing copy and asset location
 > Unlimited Sudoku puzzles with four difficulty levels, smart hints, mistake tracking, pencil notes, and local high scores — all offline.
 
 **Description** (≤4000):
-> Sudoku is a clean, offline number-puzzle game for grown-ups. Every puzzle is generated on your device with a guaranteed unique solution, so you never run out and never see the same grid twice. Choose from four difficulty levels — Easy, Medium, Hard, and Expert — and solve at your own pace.
+> PochiDoku is a clean, offline number-puzzle game. Every puzzle is generated on your device with a guaranteed unique solution, so you never run out and never see the same grid twice. Choose from four difficulty levels — Easy, Medium, Hard, and Expert — and solve at your own pace.
 >
 > • Four difficulty levels, from gentle warm-ups to ruthless Expert grids
 > • Smart hints whenever you ask — reveal the right number for any cell

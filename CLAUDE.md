@@ -27,10 +27,10 @@ Run in the simulator and screenshot (the home/game screens sit behind the one-ti
 ```bash
 xcrun simctl boot "iPhone 17"
 APP=$(find ~/Library/Developer/Xcode/DerivedData/SudokuApp-*/Build/Products/Debug-iphonesimulator -maxdepth 1 -name SudokuApp.app | head -1)
-xcrun simctl install "iPhone 17" "$APP" && xcrun simctl launch "iPhone 17" com.tertiaryinfotech.sudokuapp
+xcrun simctl install "iPhone 17" "$APP" && xcrun simctl launch "iPhone 17" com.raboys.pochidoku
 xcrun simctl io "iPhone 17" screenshot /tmp/shot.png
 # To skip the age gate, seed the default in the app's data container before launch:
-#   PlistBuddy -c "Add :SudokuApp.ageConfirmed bool true" <container>/Library/Preferences/com.tertiaryinfotech.sudokuapp.plist
+#   PlistBuddy -c "Add :SudokuApp.ageConfirmed bool true" <container>/Library/Preferences/com.raboys.pochidoku.plist
 ```
 
 **Tests:** there is no XCTest target. The Sudoku engine is pure and self-contained, so the

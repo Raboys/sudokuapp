@@ -1,0 +1,76 @@
+name: iOS screenshot
+
+on:
+  push:
+    branches:
+      - agent/pochidoku-simulator-shot
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  screenshot:
+    runs-on: macos-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+
+      - name: Build PochiDoku for Simulator
+        run: |
+          xcodebuild \
+            -project SudokuApp.xcodeproj \
+            -target SudokuApp \
+            -configuration Debug \
+            -sdk iphonesimulator \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            CONFIGURATION_BUILD_DIR="$RUNNER_TEMP/PochiDokuBuild" \
+            build
+
+      - name: Boot Simulator and capture PochiDoku
+        run: |
+          RUNTIME_ID=$(xcrun simctl list runtimes --json | jq -r \
+            '.runtimes[] | select(.isAvailable == true and (.identifier | contains("iOS"))) | .identifier' | tail -n 1)
+          DEVICE_TYPE_ID=$(xcrun simctl list devicetypes --json | jq -r \
+            '.devicetypes[] | select(.name | startswith("iPhone")) | .identifier' | head -n 1)
+
+          if [[ -z "$RUNTIME_ID" || -z "$DEVICE_TYPE_ID" ]]; then
+            echo "No available iOS runtime or iPhone device type was found."
+            xcrun simctl list
+            exit 1
+          fi
+
+          DEVICE_ID=$(xcrun simctl create "PochiDoku CI" "$DEVICE_TYPE_ID" "$RUNTIME_ID")
+          xcrun simctl boot "$DEVICE_ID"
+          xcrun simctl bootstatus "$DEVICE_ID" -b
+
+          APP_PATH=$(find "$RUNNER_TEMP/PochiDokuBuild" -maxdepth 1 -name '*.app' -print -quit)
+          if [[ -z "$APP_PATH" ]]; then
+            echo "The simulator app bundle was not found."
+            find "$RUNNER_TEMP/PochiDokuBuild" -maxdepth 2 -print
+            exit 1
+          fi
+
+          xcrun simctl status_bar "$DEVICE_ID" override \
+            --time "9:41" \
+            --batteryState charged \
+            --batteryLevel 100 \
+            --wifiBars 3 \
+            --cellularBars 4
+          xcrun simctl install "$DEVICE_ID" "$APP_PATH"
+          xcrun simctl launch --terminate-running-process "$DEVICE_ID" com.raboys.pochidoku
+          sleep 5
+
+          mkdir -p artifacts/screenshots
+          xcrun simctl io "$DEVICE_ID" screenshot artifacts/screenshots/pochidoku-age-gate.png
+
+      - name: Upload screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pochidoku-screenshots
+          path: artifacts/screenshots
+          if-no-files-found: error
+          retention-days: 3

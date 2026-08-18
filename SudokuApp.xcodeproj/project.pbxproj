@@ -197,7 +197,6 @@
 				LastUpgradeCheck = 1430;
 				TargetAttributes = {
 					769847B9C4D032C01A4ED272 = {
-						DevelopmentTeam = GU9WTSTX9M;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -276,7 +275,8 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.tertiaryinfotech.sudokuapp;
+				PRODUCT_BUNDLE_IDENTIFIER = com.raboys.pochidoku;
+				PRODUCT_NAME = PochiDoku;
 				SDKROOT = iphoneos;
 				SUPPORTS_MACCATALYST = NO;
 				TARGETED_DEVICE_FAMILY = 1;
@@ -296,7 +296,8 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.tertiaryinfotech.sudokuapp;
+				PRODUCT_BUNDLE_IDENTIFIER = com.raboys.pochidoku;
+				PRODUCT_NAME = PochiDoku;
 				SDKROOT = iphoneos;
 				SUPPORTS_MACCATALYST = NO;
 				TARGETED_DEVICE_FAMILY = 1;
@@ -340,7 +341,6 @@
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 3;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = GU9WTSTX9M;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
@@ -407,7 +407,6 @@
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 3;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = GU9WTSTX9M;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
