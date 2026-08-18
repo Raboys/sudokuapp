@@ -12,7 +12,7 @@ permissions:
 jobs:
   screenshot:
     runs-on: macos-latest
-    timeout-minutes: 12
+    timeout-minutes: 15
 
     steps:
       - name: Check out repository
@@ -81,20 +81,39 @@ jobs:
             sleep 2
           done
 
-          xcrun simctl launch --terminate-running-process \
-            "$DEVICE_ID" com.raboys.pochidoku >"$RUNNER_TEMP/simctl-launch.log" 2>&1 &
-          LAUNCH_COMMAND_PID=$!
-          for ((attempt = 1; attempt <= 60; attempt++)); do
-            if ! kill -0 "$LAUNCH_COMMAND_PID" 2>/dev/null; then
+          APP_LAUNCHED=false
+          for ((launch_attempt = 1; launch_attempt <= 2; launch_attempt++)); do
+            LAUNCH_LOG="$RUNNER_TEMP/simctl-launch-$launch_attempt.log"
+            xcrun simctl launch --terminate-running-process \
+              "$DEVICE_ID" com.raboys.pochidoku >"$LAUNCH_LOG" 2>&1 &
+            LAUNCH_COMMAND_PID=$!
+
+            for ((poll_attempt = 1; poll_attempt <= 75; poll_attempt++)); do
+              if ! kill -0 "$LAUNCH_COMMAND_PID" 2>/dev/null; then
+                break
+              fi
+              sleep 2
+            done
+
+            if kill -0 "$LAUNCH_COMMAND_PID" 2>/dev/null; then
+              kill -KILL "$LAUNCH_COMMAND_PID" || true
+            fi
+            wait "$LAUNCH_COMMAND_PID" || true
+            cat "$LAUNCH_LOG"
+
+            if grep -Eq '^com\.raboys\.pochidoku: [0-9]+$' "$LAUNCH_LOG"; then
+              APP_LAUNCHED=true
               break
             fi
-            sleep 2
+
+            echo "PochiDoku launch attempt $launch_attempt did not reach the foreground."
+            sleep 5
           done
-          if kill -0 "$LAUNCH_COMMAND_PID" 2>/dev/null; then
-            kill -KILL "$LAUNCH_COMMAND_PID" || true
+
+          if [[ "$APP_LAUNCHED" != "true" ]]; then
+            echo "PochiDoku could not be launched; refusing to capture the Simulator home screen."
+            exit 1
           fi
-          wait "$LAUNCH_COMMAND_PID" || true
-          cat "$RUNNER_TEMP/simctl-launch.log"
           sleep 8
 
           mkdir -p artifacts/screenshots
