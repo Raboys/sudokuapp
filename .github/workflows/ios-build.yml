@@ -1,0 +1,32 @@
+name: iOS build
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v5
+
+      - name: Show Xcode and project
+        run: |
+          xcodebuild -version
+          ls -la SudokuApp.xcodeproj
+
+      - name: Build SudokuApp
+        run: |
+          xcodebuild \
+            -project SudokuApp.xcodeproj \
+            -target SudokuApp \
+            -configuration Debug \
+            -sdk iphonesimulator \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            build
