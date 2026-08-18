@@ -45,7 +45,7 @@ jobs:
           xcrun simctl boot "$DEVICE_ID" >"$RUNNER_TEMP/simctl-boot.log" 2>&1 &
           BOOT_COMMAND_PID=$!
 
-          for attempt in {1..60}; do
+          for ((attempt = 1; attempt <= 60; attempt++)); do
             DEVICE_STATE=$(xcrun simctl list devices --json | jq -r \
               --arg udid "$DEVICE_ID" '.devices[] | .[] | select(.udid == $udid) | .state')
             if [[ "$DEVICE_STATE" == "Booted" ]]; then
@@ -55,7 +55,7 @@ jobs:
           done
 
           if kill -0 "$BOOT_COMMAND_PID" 2>/dev/null; then
-            kill "$BOOT_COMMAND_PID" || true
+            kill -KILL "$BOOT_COMMAND_PID" || true
           fi
           wait "$BOOT_COMMAND_PID" || true
           cat "$RUNNER_TEMP/simctl-boot.log"
@@ -74,7 +74,7 @@ jobs:
             exit 1
           fi
 
-          for attempt in {1..30}; do
+          for ((attempt = 1; attempt <= 30; attempt++)); do
             if xcrun simctl install "$DEVICE_ID" "$APP_PATH"; then
               break
             fi
@@ -84,14 +84,14 @@ jobs:
           xcrun simctl launch --terminate-running-process \
             "$DEVICE_ID" com.raboys.pochidoku >"$RUNNER_TEMP/simctl-launch.log" 2>&1 &
           LAUNCH_COMMAND_PID=$!
-          for attempt in {1..60}; do
+          for ((attempt = 1; attempt <= 60; attempt++)); do
             if ! kill -0 "$LAUNCH_COMMAND_PID" 2>/dev/null; then
               break
             fi
             sleep 2
           done
           if kill -0 "$LAUNCH_COMMAND_PID" 2>/dev/null; then
-            kill "$LAUNCH_COMMAND_PID" || true
+            kill -KILL "$LAUNCH_COMMAND_PID" || true
           fi
           wait "$LAUNCH_COMMAND_PID" || true
           cat "$RUNNER_TEMP/simctl-launch.log"
