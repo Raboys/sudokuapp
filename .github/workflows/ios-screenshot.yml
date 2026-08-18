@@ -42,8 +42,8 @@ jobs:
             exit 1
           fi
 
-          xcrun simctl boot "$DEVICE_ID" || true
-          open -a Simulator --args -CurrentDeviceUDID "$DEVICE_ID"
+          xcrun simctl boot "$DEVICE_ID" >"$RUNNER_TEMP/simctl-boot.log" 2>&1 &
+          BOOT_COMMAND_PID=$!
 
           for attempt in {1..60}; do
             DEVICE_STATE=$(xcrun simctl list devices --json | jq -r \
@@ -53,6 +53,12 @@ jobs:
             fi
             sleep 2
           done
+
+          if kill -0 "$BOOT_COMMAND_PID" 2>/dev/null; then
+            kill "$BOOT_COMMAND_PID" || true
+          fi
+          wait "$BOOT_COMMAND_PID" || true
+          cat "$RUNNER_TEMP/simctl-boot.log"
 
           if [[ "$DEVICE_STATE" != "Booted" ]]; then
             echo "The iPhone Simulator did not boot within two minutes."
@@ -68,19 +74,27 @@ jobs:
             exit 1
           fi
 
-          xcrun simctl status_bar "$DEVICE_ID" override \
-            --time "9:41" \
-            --batteryState charged \
-            --batteryLevel 100 \
-            --wifiBars 3 \
-            --cellularBars 4
           for attempt in {1..30}; do
             if xcrun simctl install "$DEVICE_ID" "$APP_PATH"; then
               break
             fi
             sleep 2
           done
-          xcrun simctl launch --terminate-running-process "$DEVICE_ID" com.raboys.pochidoku
+
+          xcrun simctl launch --terminate-running-process \
+            "$DEVICE_ID" com.raboys.pochidoku >"$RUNNER_TEMP/simctl-launch.log" 2>&1 &
+          LAUNCH_COMMAND_PID=$!
+          for attempt in {1..60}; do
+            if ! kill -0 "$LAUNCH_COMMAND_PID" 2>/dev/null; then
+              break
+            fi
+            sleep 2
+          done
+          if kill -0 "$LAUNCH_COMMAND_PID" 2>/dev/null; then
+            kill "$LAUNCH_COMMAND_PID" || true
+          fi
+          wait "$LAUNCH_COMMAND_PID" || true
+          cat "$RUNNER_TEMP/simctl-launch.log"
           sleep 8
 
           mkdir -p artifacts/screenshots
@@ -88,7 +102,7 @@ jobs:
 
       - name: Upload screenshots
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: pochidoku-screenshots
           path: artifacts/screenshots
