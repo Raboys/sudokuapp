@@ -12,6 +12,7 @@ permissions:
 jobs:
   screenshot:
     runs-on: macos-latest
+    timeout-minutes: 12
 
     steps:
       - name: Check out repository
@@ -31,20 +32,34 @@ jobs:
 
       - name: Boot Simulator and capture PochiDoku
         run: |
-          RUNTIME_ID=$(xcrun simctl list runtimes --json | jq -r \
-            '.runtimes[] | select(.isAvailable == true and (.identifier | contains("iOS"))) | .identifier' | tail -n 1)
-          DEVICE_TYPE_ID=$(xcrun simctl list devicetypes --json | jq -r \
-            '.devicetypes[] | select(.name | startswith("iPhone")) | .identifier' | head -n 1)
+          set -x
+          DEVICE_ID=$(xcrun simctl list devices available --json | jq -r \
+            '[.devices[] | .[] | select(.name | startswith("iPhone"))][0].udid // empty')
 
-          if [[ -z "$RUNTIME_ID" || -z "$DEVICE_TYPE_ID" ]]; then
-            echo "No available iOS runtime or iPhone device type was found."
+          if [[ -z "$DEVICE_ID" ]]; then
+            echo "No preconfigured iPhone Simulator was found."
             xcrun simctl list
             exit 1
           fi
 
-          DEVICE_ID=$(xcrun simctl create "PochiDoku CI" "$DEVICE_TYPE_ID" "$RUNTIME_ID")
-          xcrun simctl boot "$DEVICE_ID"
-          xcrun simctl bootstatus "$DEVICE_ID" -b
+          xcrun simctl boot "$DEVICE_ID" || true
+          open -a Simulator --args -CurrentDeviceUDID "$DEVICE_ID"
+
+          for attempt in {1..60}; do
+            DEVICE_STATE=$(xcrun simctl list devices --json | jq -r \
+              --arg udid "$DEVICE_ID" '.devices[] | .[] | select(.udid == $udid) | .state')
+            if [[ "$DEVICE_STATE" == "Booted" ]]; then
+              break
+            fi
+            sleep 2
+          done
+
+          if [[ "$DEVICE_STATE" != "Booted" ]]; then
+            echo "The iPhone Simulator did not boot within two minutes."
+            xcrun simctl list devices
+            exit 1
+          fi
+          sleep 5
 
           APP_PATH=$(find "$RUNNER_TEMP/PochiDokuBuild" -maxdepth 1 -name '*.app' -print -quit)
           if [[ -z "$APP_PATH" ]]; then
@@ -59,9 +74,14 @@ jobs:
             --batteryLevel 100 \
             --wifiBars 3 \
             --cellularBars 4
-          xcrun simctl install "$DEVICE_ID" "$APP_PATH"
+          for attempt in {1..30}; do
+            if xcrun simctl install "$DEVICE_ID" "$APP_PATH"; then
+              break
+            fi
+            sleep 2
+          done
           xcrun simctl launch --terminate-running-process "$DEVICE_ID" com.raboys.pochidoku
-          sleep 5
+          sleep 8
 
           mkdir -p artifacts/screenshots
           xcrun simctl io "$DEVICE_ID" screenshot artifacts/screenshots/pochidoku-age-gate.png
