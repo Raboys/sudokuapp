@@ -11,7 +11,7 @@ struct GameView: View {
             statusBar
                 .padding(.horizontal, 16)
             boardArea
-                .padding(.horizontal, 4)
+                .padding(.horizontal, 2)
             Spacer(minLength: 0)
             actionRow
                 .padding(.horizontal, 8)
@@ -82,8 +82,8 @@ struct GameView: View {
     private var boardArea: some View {
         ZStack {
             BoardView()
-                .padding(2)
-                .background(Color(.systemBackground), in: RoundedRectangle(cornerRadius: 6))
+                .padding(1)
+                .background(Color(.systemBackground), in: RoundedRectangle(cornerRadius: 4))
                 .blur(radius: viewModel.isPaused ? 14 : 0)
 
             if viewModel.isPaused {
