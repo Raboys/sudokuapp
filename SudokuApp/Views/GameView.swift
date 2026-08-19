@@ -39,9 +39,17 @@ struct GameView: View {
 
             Spacer()
 
-            Label(viewModel.difficulty.title, systemImage: viewModel.difficulty.symbol)
-                .font(.subheadline.weight(.semibold))
-                .foregroundStyle(viewModel.difficulty.tint)
+            HStack(spacing: 6) {
+                MiniCatMark(color: viewModel.difficulty.tint)
+                Text(viewModel.difficulty.title)
+                    .font(.subheadline.weight(.semibold))
+            }
+            .foregroundStyle(viewModel.difficulty.tint)
+            .padding(.horizontal, 9)
+            .padding(.vertical, 5)
+            .background(viewModel.difficulty.tint.opacity(0.1), in: Capsule())
+            .accessibilityElement(children: .combine)
+            .accessibilityLabel("\(viewModel.difficulty.title) difficulty")
 
             Spacer()
 
@@ -96,11 +104,80 @@ struct GameView: View {
             ActionButton(title: "Notes",
                          symbol: viewModel.isNotesMode ? "pencil.circle.fill" : "pencil.circle",
                          highlighted: viewModel.isNotesMode) { viewModel.toggleNotesMode() }
-            ActionButton(title: "Hint", symbol: "lightbulb",
+            ActionButton(title: "Hint", symbol: "pawprint.fill",
+                         highlighted: true,
                          badge: viewModel.hintsUsed > 0 ? "\(viewModel.hintsUsed)" : nil) {
                 viewModel.useHint()
             }
         }
+    }
+}
+
+/// A tiny echo of the 14+ cat badge that keeps the game screen branded without
+/// competing with the board.
+private struct MiniCatMark: View {
+    let color: Color
+
+    var body: some View {
+        ZStack {
+            MiniCatEar()
+                .fill(color)
+                .frame(width: 9, height: 9)
+                .rotationEffect(.degrees(-9))
+                .offset(x: -7, y: -7)
+
+            MiniCatEar()
+                .fill(color)
+                .frame(width: 9, height: 9)
+                .rotationEffect(.degrees(9))
+                .offset(x: 7, y: -7)
+
+            Circle()
+                .fill(color)
+                .frame(width: 22, height: 22)
+
+            HStack(spacing: 6) {
+                Capsule().frame(width: 2, height: 4)
+                Capsule().frame(width: 2, height: 4)
+            }
+            .foregroundStyle(.white.opacity(0.88))
+            .offset(y: -2)
+
+            CatSmile()
+                .stroke(.white.opacity(0.82), style: StrokeStyle(lineWidth: 1, lineCap: .round))
+                .frame(width: 8, height: 4)
+                .offset(y: 5)
+        }
+        .frame(width: 26, height: 24)
+        .accessibilityHidden(true)
+    }
+}
+
+private struct MiniCatEar: Shape {
+    func path(in rect: CGRect) -> Path {
+        var path = Path()
+        path.move(to: CGPoint(x: rect.midX, y: rect.minY))
+        path.addLine(to: CGPoint(x: rect.maxX, y: rect.maxY))
+        path.addLine(to: CGPoint(x: rect.minX, y: rect.maxY))
+        path.closeSubpath()
+        return path
+    }
+}
+
+private struct CatSmile: Shape {
+    func path(in rect: CGRect) -> Path {
+        var path = Path()
+        path.move(to: CGPoint(x: rect.midX, y: rect.minY))
+        path.addQuadCurve(
+            to: CGPoint(x: rect.minX, y: rect.midY),
+            control: CGPoint(x: rect.width * 0.35, y: rect.maxY)
+        )
+        path.move(to: CGPoint(x: rect.midX, y: rect.minY))
+        path.addQuadCurve(
+            to: CGPoint(x: rect.maxX, y: rect.midY),
+            control: CGPoint(x: rect.width * 0.65, y: rect.maxY)
+        )
+        return path
     }
 }
 

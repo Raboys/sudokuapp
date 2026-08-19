@@ -84,7 +84,7 @@ jobs:
           APP_LAUNCHED=false
           for ((launch_attempt = 1; launch_attempt <= 2; launch_attempt++)); do
             LAUNCH_LOG="$RUNNER_TEMP/simctl-launch-$launch_attempt.log"
-            xcrun simctl launch --terminate-running-process \
+            SIMCTL_CHILD_SUDOKU_SCREENSHOT=game xcrun simctl launch --terminate-running-process \
               "$DEVICE_ID" com.raboys.pochidoku >"$LAUNCH_LOG" 2>&1 &
             LAUNCH_COMMAND_PID=$!
 
@@ -117,7 +117,7 @@ jobs:
           sleep 8
 
           mkdir -p artifacts/screenshots
-          xcrun simctl io "$DEVICE_ID" screenshot artifacts/screenshots/pochidoku-age-gate.png
+          xcrun simctl io "$DEVICE_ID" screenshot artifacts/screenshots/pochidoku-game.png
 
       - name: Upload screenshots
         if: always()
