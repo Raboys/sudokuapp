@@ -9,12 +9,15 @@ struct GameView: View {
     var body: some View {
         VStack(spacing: 16) {
             statusBar
+                .padding(.horizontal, 16)
             boardArea
+                .padding(.horizontal, 4)
             Spacer(minLength: 0)
             actionRow
+                .padding(.horizontal, 8)
             NumberPad { viewModel.enter($0) }
+                .padding(.horizontal, 4)
         }
-        .padding(.horizontal, 16)
         .padding(.top, 8)
         .padding(.bottom, 12)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -79,8 +82,8 @@ struct GameView: View {
     private var boardArea: some View {
         ZStack {
             BoardView()
-                .padding(4)
-                .background(Color(.systemBackground), in: RoundedRectangle(cornerRadius: 8))
+                .padding(2)
+                .background(Color(.systemBackground), in: RoundedRectangle(cornerRadius: 6))
                 .blur(radius: viewModel.isPaused ? 14 : 0)
 
             if viewModel.isPaused {
