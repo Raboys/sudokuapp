@@ -88,7 +88,7 @@ struct HomeView: View {
 
     private var dailyChallengeSubtitle: String {
         if viewModel.isTodayChallengeCompleted { return "Completed today · Play again" }
-        return "Medium · One puzzle for everyone"
+        return "Medium · One shared puzzle"
     }
 
     private var header: some View {
