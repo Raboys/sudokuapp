@@ -19,6 +19,8 @@ struct StatsView: View {
                         summaryRow("Games solved", "\(stats.gamesPlayed)", "checkmark.circle")
                         summaryRow("Best score", "\(stats.bestScore)", "star.fill")
                         summaryRow("Total score", "\(stats.totalScore)", "sum")
+                        summaryRow("Daily streak", "\(stats.currentStreak)", "pawprint.fill")
+                        summaryRow("Daily challenges", "\(stats.dailyChallengesSolved)", "calendar")
                     }
 
                     Section("Best time") {
@@ -113,7 +115,8 @@ private struct HistoryRow: View {
                 .frame(width: 34, height: 34)
                 .background(session.difficulty.tint, in: RoundedRectangle(cornerRadius: 9))
             VStack(alignment: .leading, spacing: 2) {
-                Text(session.difficulty.title).font(.headline)
+                Text(session.isDailyChallenge ? "Daily · \(session.difficulty.title)" : session.difficulty.title)
+                    .font(.headline)
                 Text(session.date, format: .dateTime.day().month().hour().minute())
                     .font(.caption).foregroundStyle(.secondary)
             }

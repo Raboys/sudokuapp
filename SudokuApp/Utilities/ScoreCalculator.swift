@@ -8,6 +8,23 @@ enum ScoreCalculator {
     static let mistakePenalty = 100
     static let minimumScore = 50
 
+    /// Score earned by the board's current correct progress. It starts at zero,
+    /// cannot be inflated by re-entering a value, and uses the same penalties as
+    /// the final score. The speed bonus is intentionally reserved for completion.
+    static func liveScore(difficulty: Difficulty,
+                          puzzle: [Int],
+                          values: [Int],
+                          solution: [Int],
+                          hintsUsed: Int,
+                          mistakes: Int) -> Int {
+        guard puzzle.count == values.count, values.count == solution.count else { return 0 }
+        let playable = puzzle.indices.filter { puzzle[$0] == 0 }
+        guard !playable.isEmpty else { return 0 }
+        let correct = playable.filter { values[$0] == solution[$0] }.count
+        let progress = difficulty.baseScore * correct / playable.count
+        return max(0, progress - hintsUsed * hintPenalty - mistakes * mistakePenalty)
+    }
+
     static func score(difficulty: Difficulty,
                       seconds: Int,
                       hintsUsed: Int,

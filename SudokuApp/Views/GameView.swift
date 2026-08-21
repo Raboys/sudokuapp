@@ -7,8 +7,10 @@ struct GameView: View {
     @State private var showQuitConfirm = false
 
     var body: some View {
-        VStack(spacing: 16) {
-            statusBar
+        VStack(spacing: 12) {
+            topBar
+                .padding(.horizontal, 16)
+            metricsBar
                 .padding(.horizontal, 16)
             boardArea
                 .padding(.horizontal, 2)
@@ -31,50 +33,70 @@ struct GameView: View {
         }
     }
 
-    // MARK: Status bar
+    // MARK: Progress header
 
-    private var statusBar: some View {
+    private var topBar: some View {
         HStack {
             Button { showQuitConfirm = true } label: {
                 Image(systemName: "chevron.left").font(.headline)
             }
             .accessibilityLabel("Back")
 
+            Label("Streak \(viewModel.dailyStreak)", systemImage: "pawprint.fill")
+                .font(.subheadline.weight(.semibold))
+                .foregroundStyle(.tint)
+
             Spacer()
 
-            HStack(spacing: 6) {
-                MiniCatMark(color: viewModel.difficulty.tint)
-                Text(viewModel.difficulty.title)
-                    .font(.subheadline.weight(.semibold))
+            if viewModel.isDailyChallenge {
+                Label("Daily", systemImage: "calendar")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(.secondary)
             }
-            .foregroundStyle(viewModel.difficulty.tint)
-            .padding(.horizontal, 9)
-            .padding(.vertical, 5)
-            .background(viewModel.difficulty.tint.opacity(0.1), in: Capsule())
-            .accessibilityElement(children: .combine)
-            .accessibilityLabel("\(viewModel.difficulty.title) difficulty")
+        }
+    }
 
-            Spacer()
+    private var metricsBar: some View {
+        HStack(alignment: .bottom, spacing: 8) {
+            metric(title: "Mistakes", value: "\(viewModel.mistakes)/\(viewModel.mistakeLimit)", color: .red)
+                .frame(maxWidth: .infinity, alignment: .leading)
 
-            HStack(spacing: 14) {
-                if viewModel.mistakes > 0 || viewModel.limitMistakes {
-                    Label(mistakeText, systemImage: "xmark.circle")
-                        .font(.subheadline.monospacedDigit())
-                        .foregroundStyle(.red)
-                        .labelStyle(.titleAndIcon)
+            VStack(spacing: 2) {
+                Text("Score: \(viewModel.liveScore)")
+                    .font(.headline.monospacedDigit())
+                    .foregroundStyle(.tint)
+                HStack(spacing: 4) {
+                    MiniCatMark(color: viewModel.difficulty.tint)
+                        .scaleEffect(0.68)
+                        .frame(width: 18, height: 17)
+                    Text(viewModel.difficulty.title)
+                        .font(.caption)
                 }
-                Button { viewModel.togglePause() } label: {
+                .foregroundStyle(.secondary)
+            }
+            .frame(maxWidth: .infinity)
+            .accessibilityElement(children: .combine)
+
+            Button { viewModel.togglePause() } label: {
+                VStack(alignment: .trailing, spacing: 2) {
+                    Text("Time")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
                     Label(viewModel.formattedElapsed,
                           systemImage: viewModel.isPaused ? "play.fill" : "pause.fill")
                         .font(.subheadline.monospacedDigit())
                         .foregroundStyle(.primary)
                 }
             }
+            .frame(maxWidth: .infinity, alignment: .trailing)
         }
     }
 
-    private var mistakeText: String {
-        viewModel.limitMistakes ? "\(viewModel.mistakes)/\(viewModel.mistakeLimit)" : "\(viewModel.mistakes)"
+    private func metric(title: String, value: String, color: Color) -> some View {
+        VStack(alignment: .leading, spacing: 2) {
+            Text(title).font(.caption).foregroundStyle(.secondary)
+            Text(value).font(.subheadline.monospacedDigit()).foregroundStyle(color)
+        }
     }
 
     // MARK: Board

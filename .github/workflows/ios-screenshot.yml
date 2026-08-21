@@ -5,6 +5,16 @@ on:
     branches:
       - agent/pochidoku-simulator-shot
   workflow_dispatch:
+    inputs:
+      screen:
+        description: Screen to seed and capture
+        required: true
+        default: game
+        type: choice
+        options:
+          - home
+          - game
+          - completion
 
 permissions:
   contents: read
@@ -33,6 +43,7 @@ jobs:
       - name: Boot Simulator and capture PochiDoku
         run: |
           set -x
+          SCREENSHOT_SCREEN="${{ inputs.screen || 'game' }}"
           DEVICE_ID=$(xcrun simctl list devices available --json | jq -r \
             '[.devices[] | .[] | select(.name | startswith("iPhone"))][0].udid // empty')
 
@@ -84,7 +95,7 @@ jobs:
           APP_LAUNCHED=false
           for ((launch_attempt = 1; launch_attempt <= 2; launch_attempt++)); do
             LAUNCH_LOG="$RUNNER_TEMP/simctl-launch-$launch_attempt.log"
-            SIMCTL_CHILD_SUDOKU_SCREENSHOT=game xcrun simctl launch --terminate-running-process \
+            SIMCTL_CHILD_SUDOKU_SCREENSHOT="$SCREENSHOT_SCREEN" xcrun simctl launch --terminate-running-process \
               "$DEVICE_ID" com.raboys.pochidoku >"$LAUNCH_LOG" 2>&1 &
             LAUNCH_COMMAND_PID=$!
 
@@ -117,7 +128,7 @@ jobs:
           sleep 8
 
           mkdir -p artifacts/screenshots
-          xcrun simctl io "$DEVICE_ID" screenshot artifacts/screenshots/pochidoku-game.png
+          xcrun simctl io "$DEVICE_ID" screenshot "artifacts/screenshots/pochidoku-$SCREENSHOT_SCREEN.png"
 
       - name: Upload screenshots
         if: always()

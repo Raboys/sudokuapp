@@ -103,17 +103,28 @@ enum SudokuEngine {
 
     /// A random, fully-solved, valid grid.
     static func generateSolved() -> [Int] {
+        var generator = SystemRandomNumberGenerator()
+        return generateSolved(using: &generator)
+    }
+
+    /// A reproducible fully-solved grid, used by the daily challenge.
+    static func generateSolved(seed: UInt64) -> [Int] {
+        var generator = SeededGenerator(seed: seed)
+        return generateSolved(using: &generator)
+    }
+
+    private static func generateSolved<R: RandomNumberGenerator>(using generator: inout R) -> [Int] {
         var g = [Int](repeating: 0, count: cellCount)
-        _ = fill(&g)
+        _ = fill(&g, using: &generator)
         return g
     }
 
-    private static func fill(_ g: inout [Int]) -> Bool {
+    private static func fill<R: RandomNumberGenerator>(_ g: inout [Int], using generator: inout R) -> Bool {
         guard let (idx, candidates) = bestEmpty(g) else { return true }
         if candidates.isEmpty { return false }
-        for n in candidates.shuffled() {
+        for n in shuffled(candidates, using: &generator) {
             g[idx] = n
-            if fill(&g) { return true }
+            if fill(&g, using: &generator) { return true }
             g[idx] = 0
         }
         return false
@@ -123,10 +134,24 @@ enum SudokuEngine {
     /// Removal stops once `targetClues` givens remain (or no further cell can be removed
     /// while keeping uniqueness). Returns the puzzle, its solution, and the actual clue count.
     static func generatePuzzle(targetClues: Int) -> (puzzle: [Int], solution: [Int], clues: Int) {
-        let solution = generateSolved()
+        var generator = SystemRandomNumberGenerator()
+        return generatePuzzle(targetClues: targetClues, using: &generator)
+    }
+
+    /// Reproducible puzzle generation for a calendar-day challenge.
+    static func generatePuzzle(targetClues: Int, seed: UInt64) -> (puzzle: [Int], solution: [Int], clues: Int) {
+        var generator = SeededGenerator(seed: seed)
+        return generatePuzzle(targetClues: targetClues, using: &generator)
+    }
+
+    private static func generatePuzzle<R: RandomNumberGenerator>(
+        targetClues: Int,
+        using generator: inout R
+    ) -> (puzzle: [Int], solution: [Int], clues: Int) {
+        let solution = generateSolved(using: &generator)
         var puzzle = solution
         var givens = cellCount
-        for idx in Array(0..<cellCount).shuffled() {
+        for idx in shuffled(Array(0..<cellCount), using: &generator) {
             if givens <= targetClues { break }
             let backup = puzzle[idx]
             puzzle[idx] = 0
@@ -137,5 +162,36 @@ enum SudokuEngine {
             }
         }
         return (puzzle, solution, givens)
+    }
+
+    /// A local Fisher–Yates shuffle keeps daily boards stable across Swift versions.
+    private static func shuffled<R: RandomNumberGenerator>(
+        _ values: [Int],
+        using generator: inout R
+    ) -> [Int] {
+        guard values.count > 1 else { return values }
+        var result = values
+        for index in stride(from: result.count - 1, through: 1, by: -1) {
+            let other = Int(generator.next() % UInt64(index + 1))
+            result.swapAt(index, other)
+        }
+        return result
+    }
+
+    /// SplitMix64 is tiny, deterministic, and sufficient for reproducible shuffling.
+    private struct SeededGenerator: RandomNumberGenerator {
+        private var state: UInt64
+
+        init(seed: UInt64) {
+            state = seed
+        }
+
+        mutating func next() -> UInt64 {
+            state &+= 0x9E3779B97F4A7C15
+            var value = state
+            value = (value ^ (value >> 30)) &* 0xBF58476D1CE4E5B9
+            value = (value ^ (value >> 27)) &* 0x94D049BB133111EB
+            return value ^ (value >> 31)
+        }
     }
 }

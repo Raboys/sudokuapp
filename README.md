@@ -24,9 +24,9 @@
 
 PochiDoku is a native **SwiftUI** number‑puzzle game for iPhone, built to ship on the
 App Store. Every puzzle is generated **on‑device** with a mathematically **guaranteed unique
-solution**, so you never run out and never see the same grid twice. It's 100% offline and
-private — scores and history never leave your phone. For ages **14+** (one‑tap confirmation,
-no ID or verification).
+solution**, including one shared puzzle for each calendar day's challenge. It's 100% offline
+and private — scores, streaks, and history never leave your phone. For ages **14+**
+(one‑tap confirmation, no ID or verification).
 
 > Inspired by the Android [sudoku-mobile](https://github.com/alfredang/sudoku-mobile) app,
 > rebuilt natively in Swift.
@@ -36,11 +36,14 @@ no ID or verification).
 | Feature | Description |
 |---|---|
 | 🎚️ Four difficulty levels | Easy / Medium / Hard / Expert (45 / 36 / 30 / 25 starting clues) |
+| 📅 Daily challenge | One reproducible Medium puzzle per calendar day, generated on-device |
+| 🐾 Daily streak | Consecutive completed daily challenges, stored only on this iPhone |
 | 💡 Smart hints | Reveal the correct value for any cell on request — each hint affects your score |
 | ✏️ Pencil notes | Candidate marks with optional auto‑cleanup of peers |
 | 🎯 Highlighting | Conflict and same‑number highlighting, both toggleable |
-| 🏆 Scoring & history | Base points + speed bonus − hint/mistake penalties; best times per difficulty |
-| 💾 Local storage | Scores, history and an in‑progress game saved on‑device (`UserDefaults`) |
+| 🏆 Live scoring & history | Progress points in-game, completion bonus, personal bests, and honest personal percentiles |
+| ❌ Three-strike games | Every puzzle allows up to three incorrect entries |
+| 💾 Local storage | Scores, streaks, history and an in‑progress game saved on‑device (`UserDefaults`) |
 | ⏸️ Resume | Quit any time and pick up where you left off — the Continue card shows difficulty + time |
 | 🧭 Bottom navigation | Home · Stats · Feedback · About tabs; Stats keeps your scores/times one tap away |
 | 💬 Feedback tab | Send feedback straight to the developers via WhatsApp |
@@ -70,7 +73,7 @@ no ID or verification).
                                  │  @EnvironmentObject
                        ┌─────────▼──────────┐
                        │   GameViewModel    │   board state · timer · hints
-                       │  (@MainActor OO)   │   undo · settings · 14+ gate
+                       │  (@MainActor OO)   │   undo · daily streak · 14+ gate
                        └───┬───────────┬────┘
               ┌────────────▼──┐   ┌────▼─────────────┐
               │  SudokuEngine │   │   ScoreStore     │

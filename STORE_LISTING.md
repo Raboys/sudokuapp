@@ -23,20 +23,22 @@ the gitignored `.env`; this file holds the public-facing copy and asset location
 **Keywords** (≤100, CSV): `sudoku,puzzle,number,logic,brain,board game,grid,classic,offline,hints`
 
 **Promotional text** (≤170):
-> Unlimited Sudoku puzzles with four difficulty levels, smart hints, mistake tracking, pencil notes, and local high scores — all offline.
+> Daily Sudoku challenges, streaks, live scores, smart hints, and four difficulty levels — private, focused, and completely offline.
 
 **Description** (≤4000):
-> PochiDoku is a clean, offline number-puzzle game. Every puzzle is generated on your device with a guaranteed unique solution, so you never run out and never see the same grid twice. Choose from four difficulty levels — Easy, Medium, Hard, and Expert — and solve at your own pace.
+> PochiDoku is a clean, offline number-puzzle game. Every puzzle is generated on your device with a guaranteed unique solution. Choose from four difficulty levels — Easy, Medium, Hard, and Expert — or return for one shared daily challenge generated from the calendar date.
 >
 > • Four difficulty levels, from gentle warm-ups to ruthless Expert grids
 > • Smart hints whenever you ask — reveal the right number for any cell
 > • Pencil notes (candidates) with optional auto-cleanup
 > • Conflict and same-number highlighting you can toggle on or off
-> • Optional 3-strike challenge mode for mistake-free runs
+> • Three-strike games with clear mistake tracking
+> • Daily challenges and consecutive-day streaks
+> • Live points, personal bests, and comparisons against your own past games
 > • A timer, scoring, and full game history kept entirely on your iPhone
 > • 100% offline and private — nothing ever leaves your device
 >
-> Track your best times and scores per difficulty, resume any game you leave, and train your brain one grid at a time.
+> Track your best times and scores per difficulty, resume any game you leave, and build a daily streak one grid at a time.
 
 ## App Privacy
 

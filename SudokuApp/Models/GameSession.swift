@@ -9,6 +9,10 @@ struct GameSession: Identifiable, Codable, Equatable {
     var hintsUsed: Int
     var mistakes: Int
     var score: Int
+    /// Calendar-day identifier for a daily challenge. `nil` means a regular game.
+    var challengeID: String? = nil
+
+    var isDailyChallenge: Bool { challengeID != nil }
 
     /// `mm:ss` (or `h:mm:ss`) formatting of the solve time.
     var formattedDuration: String {
@@ -32,4 +36,6 @@ struct ActiveGame: Codable, Equatable {
     var elapsedSeconds: Int
     var mistakes: Int
     var hintsUsed: Int
+    /// Calendar-day identifier for a daily challenge. Optional for save compatibility.
+    var challengeID: String? = nil
 }

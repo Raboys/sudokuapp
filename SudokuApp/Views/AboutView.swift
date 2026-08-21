@@ -24,7 +24,7 @@ struct AboutView: View {
                             Text("PochiDoku")
                                 .font(.title3.bold())
                         }
-                        Text("A clean, classic Sudoku for iPhone. Every puzzle is generated on your device with a guaranteed unique solution, across four difficulty levels with smart hints, pencil notes, and scoring. Your scores, times, and history are stored only on this iPhone and never leave it.")
+                        Text("A clean, classic Sudoku for iPhone. Every puzzle is generated on your device with a guaranteed unique solution, including a new daily challenge. Live scores, streaks, times, and history stay only on this iPhone and never leave it.")
                             .font(.subheadline)
                             .foregroundStyle(.secondary)
                     }
