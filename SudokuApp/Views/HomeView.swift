@@ -87,8 +87,8 @@ struct HomeView: View {
     }
 
     private var dailyChallengeSubtitle: String {
-        if viewModel.isTodayChallengeCompleted { return "Completed today · Play again" }
-        return "Medium · One shared puzzle"
+        if viewModel.isTodayChallengeCompleted { return L10n.text("Completed today · Play again") }
+        return L10n.text("Medium · One shared puzzle")
     }
 
     private var header: some View {
@@ -133,10 +133,10 @@ struct HomeView: View {
     /// are coming back to before tapping.
     private var continueSubtitle: String {
         if let saved = viewModel.savedGameSummary {
-            let kind = saved.isDaily ? "Daily" : saved.difficulty.title
-            return "\(kind) · \(saved.elapsed)"
+            let kind = saved.isDaily ? L10n.text("Daily") : saved.difficulty.title
+            return L10n.format("%@ · %@", kind, saved.elapsed)
         }
-        return "Resume your game in progress"
+        return L10n.text("Resume your game in progress")
     }
 }
 

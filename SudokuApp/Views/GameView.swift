@@ -42,7 +42,7 @@ struct GameView: View {
             }
             .accessibilityLabel("Back")
 
-            Label("Streak \(viewModel.dailyStreak)", systemImage: "pawprint.fill")
+            Label(L10n.format("Streak %d", viewModel.dailyStreak), systemImage: "pawprint.fill")
                 .font(.subheadline.weight(.semibold))
                 .foregroundStyle(.tint)
 
@@ -58,11 +58,11 @@ struct GameView: View {
 
     private var metricsBar: some View {
         HStack(alignment: .bottom, spacing: 8) {
-            metric(title: "Mistakes", value: "\(viewModel.mistakes)/\(viewModel.mistakeLimit)", color: .red)
+            metric(title: L10n.text("Mistakes"), value: "\(viewModel.mistakes)/\(viewModel.mistakeLimit)", color: .red)
                 .frame(maxWidth: .infinity, alignment: .leading)
 
             VStack(spacing: 2) {
-                Text("Score: \(viewModel.liveScore)")
+                Text(L10n.format("Score: %d", viewModel.liveScore))
                     .font(.headline.monospacedDigit())
                     .foregroundStyle(.tint)
                 HStack(spacing: 4) {
@@ -124,12 +124,12 @@ struct GameView: View {
 
     private var actionRow: some View {
         HStack(spacing: 0) {
-            ActionButton(title: "Undo", symbol: "arrow.uturn.backward") { viewModel.undo() }
-            ActionButton(title: "Erase", symbol: "eraser") { viewModel.erase() }
-            ActionButton(title: "Notes",
+            ActionButton(title: L10n.text("Undo"), symbol: "arrow.uturn.backward") { viewModel.undo() }
+            ActionButton(title: L10n.text("Erase"), symbol: "eraser") { viewModel.erase() }
+            ActionButton(title: L10n.text("Notes"),
                          symbol: viewModel.isNotesMode ? "pencil.circle.fill" : "pencil.circle",
                          highlighted: viewModel.isNotesMode) { viewModel.toggleNotesMode() }
-            ActionButton(title: "Hint", symbol: "pawprint.fill",
+            ActionButton(title: L10n.text("Hint"), symbol: "pawprint.fill",
                          highlighted: true,
                          badge: viewModel.hintsUsed > 0 ? "\(viewModel.hintsUsed)" : nil) {
                 viewModel.useHint()
