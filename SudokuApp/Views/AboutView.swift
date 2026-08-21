@@ -18,9 +18,8 @@ struct AboutView: View {
                     // App card
                     VStack(alignment: .leading, spacing: 10) {
                         HStack(spacing: 12) {
-                            Image(systemName: "cat.fill")
-                                .font(.system(size: 34))
-                                .foregroundStyle(.tint)
+                            PochiGlyph(kind: .brand, color: .accentColor)
+                                .frame(width: 38, height: 38)
                             Text("PochiDoku")
                                 .font(.title3.bold())
                         }

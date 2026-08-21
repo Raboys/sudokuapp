@@ -27,8 +27,9 @@ struct StatsView: View {
                         ForEach(Difficulty.allCases) { level in
                             if let best = stats.bestTimeByDifficulty[level] {
                                 HStack {
-                                    Label(level.title, systemImage: level.symbol)
-                                        .foregroundStyle(level.tint)
+                                    PochiGlyph(kind: level.glyphKind, color: level.tint)
+                                        .frame(width: 20, height: 20)
+                                    Text(level.title)
                                     Spacer()
                                     Text(format(best)).font(.body.monospacedDigit())
                                     Text("· \(stats.countByDifficulty[level] ?? 0)")
@@ -110,8 +111,8 @@ private struct HistoryRow: View {
 
     var body: some View {
         HStack(spacing: 12) {
-            Image(systemName: session.difficulty.symbol)
-                .foregroundStyle(.white)
+            PochiGlyph(kind: session.difficulty.glyphKind, color: .white)
+                .frame(width: 21, height: 21)
                 .frame(width: 34, height: 34)
                 .background(session.difficulty.tint, in: RoundedRectangle(cornerRadius: 9))
             VStack(alignment: .leading, spacing: 2) {

@@ -28,15 +28,6 @@ enum Difficulty: String, CaseIterable, Codable, Identifiable {
         }
     }
 
-    var symbol: String {
-        switch self {
-        case .easy:   return "pawprint.fill"
-        case .medium: return "cat.fill"
-        case .hard:   return "eye.fill"
-        case .expert: return "crown.fill"
-        }
-    }
-
     var tint: Color {
         switch self {
         case .easy:   return .green
