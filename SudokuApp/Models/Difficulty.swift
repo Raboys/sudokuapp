@@ -21,18 +21,18 @@ enum Difficulty: String, CaseIterable, Codable, Identifiable {
 
     var subtitle: String {
         switch self {
-        case .easy:   return L10n.text("Gentle warm-up")
-        case .medium: return L10n.text("A balanced challenge")
-        case .hard:   return L10n.text("For seasoned solvers")
-        case .expert: return L10n.text("Ruthless. Good luck.")
+        case .easy:   return L10n.text("Stretch your paws")
+        case .medium: return L10n.text("Pochi starts to prowl")
+        case .hard:   return L10n.text("Claws out")
+        case .expert: return L10n.text("Pochi's territory. No mercy.")
         }
     }
 
     var symbol: String {
         switch self {
-        case .easy:   return "leaf.fill"
-        case .medium: return "flame.fill"
-        case .hard:   return "bolt.fill"
+        case .easy:   return "pawprint.fill"
+        case .medium: return "cat.fill"
+        case .hard:   return "eye.fill"
         case .expert: return "crown.fill"
         }
     }

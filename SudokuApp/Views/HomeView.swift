@@ -93,10 +93,10 @@ struct HomeView: View {
 
     private var header: some View {
         VStack(spacing: 6) {
-            Image(systemName: "square.grid.3x3.fill")
+            Image(systemName: "cat.fill")
                 .font(.system(size: 52))
                 .foregroundStyle(.tint)
-            Text("Train your brain, one grid at a time.")
+            Text("Nine lives. Nine numbers. One Pochi.")
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
         }
@@ -148,7 +148,7 @@ private struct DifficultyRow: View {
     var body: some View {
         Button(action: action) {
             HStack(spacing: 14) {
-                Image(systemName: level.symbol)
+                difficultyIcon
                     .font(.title3)
                     .foregroundStyle(.white)
                     .frame(width: 44, height: 44)
@@ -164,5 +164,25 @@ private struct DifficultyRow: View {
             .background(Color(.secondarySystemGroupedBackground), in: RoundedRectangle(cornerRadius: 16))
         }
         .buttonStyle(.plain)
+    }
+
+    @ViewBuilder
+    private var difficultyIcon: some View {
+        switch level {
+        case .easy:
+            Image(systemName: "scribble.variable")
+        case .medium:
+            Image(systemName: "cat.fill")
+        case .hard:
+            Image(systemName: "line.3.horizontal")
+                .rotationEffect(.degrees(-55))
+        case .expert:
+            ZStack {
+                Image(systemName: "cat.fill")
+                Image(systemName: "crown.fill")
+                    .font(.system(size: 8, weight: .bold))
+                    .offset(y: -11)
+            }
+        }
     }
 }
