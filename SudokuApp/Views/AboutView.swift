@@ -2,7 +2,7 @@ import SwiftUI
 
 /// About tab: what the app is, who makes it, the age guidance, and the version.
 struct AboutView: View {
-    private let developerURL = URL(string: "https://www.tertiaryinfotech.com")!
+    private let projectURL = URL(string: "https://github.com/Raboys/sudokuapp")!
 
     private var versionString: String {
         let info = Bundle.main.infoDictionary
@@ -21,10 +21,10 @@ struct AboutView: View {
                             Image(systemName: "square.grid.3x3.fill")
                                 .font(.system(size: 34))
                                 .foregroundStyle(.tint)
-                            Text("Sudoku")
+                            Text("PochiDoku")
                                 .font(.title3.bold())
                         }
-                        Text("A clean, classic Sudoku for iPhone. Every puzzle is generated on your device with a guaranteed unique solution, across four difficulty levels with smart hints, pencil notes, and scoring. Your scores, times, and history are stored only on this iPhone and never leave it.")
+                        Text("A clean, classic Sudoku for iPhone. Every puzzle is generated on your device with a guaranteed unique solution, including a new daily challenge. Live scores, streaks, times, and history stay only on this iPhone and never leave it.")
                             .font(.subheadline)
                             .foregroundStyle(.secondary)
                     }
@@ -38,11 +38,11 @@ struct AboutView: View {
                             .font(.caption.weight(.semibold))
                             .foregroundStyle(.secondary)
                         VStack(alignment: .leading, spacing: 0) {
-                            Label("Tertiary Infotech Academy Pte Ltd", systemImage: "building.2.fill")
+                            Label("Raboys", systemImage: "building.2.fill")
                                 .padding(.vertical, 14)
                             Divider()
-                            Link(destination: developerURL) {
-                                Label("tertiaryinfotech.com", systemImage: "globe")
+                            Link(destination: projectURL) {
+                                Label("Open-source project", systemImage: "chevron.left.forwardslash.chevron.right")
                             }
                             .padding(.vertical, 14)
                         }

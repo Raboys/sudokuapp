@@ -1,0 +1,140 @@
+name: iOS screenshot
+
+on:
+  push:
+    branches:
+      - agent/pochidoku-simulator-shot
+  workflow_dispatch:
+    inputs:
+      screen:
+        description: Screen to seed and capture
+        required: true
+        default: game
+        type: choice
+        options:
+          - home
+          - game
+          - completion
+
+permissions:
+  contents: read
+
+jobs:
+  screenshot:
+    runs-on: macos-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v7
+
+      - name: Build PochiDoku for Simulator
+        run: |
+          xcodebuild \
+            -project SudokuApp.xcodeproj \
+            -target SudokuApp \
+            -configuration Debug \
+            -sdk iphonesimulator \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            CONFIGURATION_BUILD_DIR="$RUNNER_TEMP/PochiDokuBuild" \
+            build
+
+      - name: Boot Simulator and capture PochiDoku
+        run: |
+          set -x
+          SCREENSHOT_SCREEN="${{ inputs.screen || 'game' }}"
+          DEVICE_ID=$(xcrun simctl list devices available --json | jq -r \
+            '[.devices[] | .[] | select(.name | startswith("iPhone"))][0].udid // empty')
+
+          if [[ -z "$DEVICE_ID" ]]; then
+            echo "No preconfigured iPhone Simulator was found."
+            xcrun simctl list
+            exit 1
+          fi
+
+          xcrun simctl boot "$DEVICE_ID" >"$RUNNER_TEMP/simctl-boot.log" 2>&1 &
+          BOOT_COMMAND_PID=$!
+
+          for ((attempt = 1; attempt <= 60; attempt++)); do
+            DEVICE_STATE=$(xcrun simctl list devices --json | jq -r \
+              --arg udid "$DEVICE_ID" '.devices[] | .[] | select(.udid == $udid) | .state')
+            if [[ "$DEVICE_STATE" == "Booted" ]]; then
+              break
+            fi
+            sleep 2
+          done
+
+          if kill -0 "$BOOT_COMMAND_PID" 2>/dev/null; then
+            kill -KILL "$BOOT_COMMAND_PID" || true
+          fi
+          wait "$BOOT_COMMAND_PID" || true
+          cat "$RUNNER_TEMP/simctl-boot.log"
+
+          if [[ "$DEVICE_STATE" != "Booted" ]]; then
+            echo "The iPhone Simulator did not boot within two minutes."
+            xcrun simctl list devices
+            exit 1
+          fi
+          sleep 5
+
+          APP_PATH=$(find "$RUNNER_TEMP/PochiDokuBuild" -maxdepth 1 -name '*.app' -print -quit)
+          if [[ -z "$APP_PATH" ]]; then
+            echo "The simulator app bundle was not found."
+            find "$RUNNER_TEMP/PochiDokuBuild" -maxdepth 2 -print
+            exit 1
+          fi
+
+          for ((attempt = 1; attempt <= 30; attempt++)); do
+            if xcrun simctl install "$DEVICE_ID" "$APP_PATH"; then
+              break
+            fi
+            sleep 2
+          done
+
+          APP_LAUNCHED=false
+          for ((launch_attempt = 1; launch_attempt <= 2; launch_attempt++)); do
+            LAUNCH_LOG="$RUNNER_TEMP/simctl-launch-$launch_attempt.log"
+            SIMCTL_CHILD_SUDOKU_SCREENSHOT="$SCREENSHOT_SCREEN" xcrun simctl launch --terminate-running-process \
+              "$DEVICE_ID" com.raboys.pochidoku >"$LAUNCH_LOG" 2>&1 &
+            LAUNCH_COMMAND_PID=$!
+
+            for ((poll_attempt = 1; poll_attempt <= 75; poll_attempt++)); do
+              if ! kill -0 "$LAUNCH_COMMAND_PID" 2>/dev/null; then
+                break
+              fi
+              sleep 2
+            done
+
+            if kill -0 "$LAUNCH_COMMAND_PID" 2>/dev/null; then
+              kill -KILL "$LAUNCH_COMMAND_PID" || true
+            fi
+            wait "$LAUNCH_COMMAND_PID" || true
+            cat "$LAUNCH_LOG"
+
+            if grep -Eq '^com\.raboys\.pochidoku: [0-9]+$' "$LAUNCH_LOG"; then
+              APP_LAUNCHED=true
+              break
+            fi
+
+            echo "PochiDoku launch attempt $launch_attempt did not reach the foreground."
+            sleep 5
+          done
+
+          if [[ "$APP_LAUNCHED" != "true" ]]; then
+            echo "PochiDoku could not be launched; refusing to capture the Simulator home screen."
+            exit 1
+          fi
+          sleep 8
+
+          mkdir -p artifacts/screenshots
+          xcrun simctl io "$DEVICE_ID" screenshot "artifacts/screenshots/pochidoku-$SCREENSHOT_SCREEN.png"
+
+      - name: Upload screenshots
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: pochidoku-screenshots
+          path: artifacts/screenshots
+          if-no-files-found: error
+          retention-days: 3

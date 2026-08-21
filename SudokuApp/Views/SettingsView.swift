@@ -15,12 +15,11 @@ struct SettingsView: View {
                     Toggle("Auto-remove pencil marks", isOn: $viewModel.autoRemoveNotes)
                 }
 
-                Section {
-                    Toggle("Limit mistakes (3 strikes)", isOn: $viewModel.limitMistakes)
-                } header: {
-                    Text("Challenge")
-                } footer: {
-                    Text("When on, a game ends after three incorrect entries.")
+                Section("Challenge") {
+                    LabeledContent("Mistake limit", value: "3")
+                    Text("Daily challenges, streaks, scores, and personal comparisons stay on this iPhone.")
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
                 }
 
                 Section("About") {

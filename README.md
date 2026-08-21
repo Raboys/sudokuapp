@@ -1,20 +1,16 @@
 <div align="center">
 
-# Tertiary Sudoku
+# PochiDoku
 
 [![Platform](https://img.shields.io/badge/Platform-iOS%2016%2B-000000?logo=apple&logoColor=white)](https://www.apple.com/ios/)
 [![Swift](https://img.shields.io/badge/Swift-5.0-FA7343?logo=swift&logoColor=white)](https://swift.org)
 [![SwiftUI](https://img.shields.io/badge/SwiftUI-0A84FF?logo=swift&logoColor=white)](https://developer.apple.com/xcode/swiftui/)
 [![XcodeGen](https://img.shields.io/badge/XcodeGen-2.45-1389FD)](https://github.com/yonaskolb/XcodeGen)
 [![Age Rating](https://img.shields.io/badge/Ages-14%2B-0D96F6)](#)
-[![App Store](https://img.shields.io/badge/App%20Store-Download-0D96F6?logo=apple&logoColor=white)](https://apps.apple.com/us/app/tertiary-sudoku/id6779973622)
-[![License](https://img.shields.io/badge/License-MIT-green.svg)](#license)
 
-**A clean, offline, native iPhone Sudoku game — unlimited unique puzzles, four difficulty levels, smart hints, and local high scores.**
+**A calm, personal Sudoku for iPhone — offline, private, and made with affection.**
 
-<a href="https://apps.apple.com/us/app/tertiary-sudoku/id6779973622"><img src="https://developer.apple.com/assets/elements/badges/download-on-the-app-store.svg" alt="Download on the App Store" height="48"></a>
-
-[Download on the App Store](https://apps.apple.com/us/app/tertiary-sudoku/id6779973622) · [Report Bug](https://github.com/alfredang/sudokuapp/issues) · [Request Feature](https://github.com/alfredang/sudokuapp/issues)
+[Report Bug](https://github.com/Raboys/sudokuapp/issues) · [Request Feature](https://github.com/Raboys/sudokuapp/issues)
 
 </div>
 
@@ -26,11 +22,11 @@
 
 ## About
 
-Tertiary Sudoku is a native **SwiftUI** number‑puzzle game for iPhone, built to ship on the
+PochiDoku is a native **SwiftUI** number‑puzzle game for iPhone, built to ship on the
 App Store. Every puzzle is generated **on‑device** with a mathematically **guaranteed unique
-solution**, so you never run out and never see the same grid twice. It's 100% offline and
-private — scores and history never leave your phone. For ages **14+** (one‑tap confirmation,
-no ID or verification).
+solution**, including one shared puzzle for each calendar day's challenge. It's 100% offline
+and private — scores, streaks, and history never leave your phone. For ages **14+**
+(one‑tap confirmation, no ID or verification).
 
 > Inspired by the Android [sudoku-mobile](https://github.com/alfredang/sudoku-mobile) app,
 > rebuilt natively in Swift.
@@ -40,11 +36,14 @@ no ID or verification).
 | Feature | Description |
 |---|---|
 | 🎚️ Four difficulty levels | Easy / Medium / Hard / Expert (45 / 36 / 30 / 25 starting clues) |
+| 📅 Daily challenge | One reproducible Medium puzzle per calendar day, generated on-device |
+| 🐾 Daily streak | Consecutive completed daily challenges, stored only on this iPhone |
 | 💡 Smart hints | Reveal the correct value for any cell on request — each hint affects your score |
 | ✏️ Pencil notes | Candidate marks with optional auto‑cleanup of peers |
 | 🎯 Highlighting | Conflict and same‑number highlighting, both toggleable |
-| 🏆 Scoring & history | Base points + speed bonus − hint/mistake penalties; best times per difficulty |
-| 💾 Local storage | Scores, history and an in‑progress game saved on‑device (`UserDefaults`) |
+| 🏆 Live scoring & history | Progress points in-game, completion bonus, personal bests, and honest personal percentiles |
+| ❌ Three-strike games | Every puzzle allows up to three incorrect entries |
+| 💾 Local storage | Scores, streaks, history and an in‑progress game saved on‑device (`UserDefaults`) |
 | ⏸️ Resume | Quit any time and pick up where you left off — the Continue card shows difficulty + time |
 | 🧭 Bottom navigation | Home · Stats · Feedback · About tabs; Stats keeps your scores/times one tap away |
 | 💬 Feedback tab | Send feedback straight to the developers via WhatsApp |
@@ -74,7 +73,7 @@ no ID or verification).
                                  │  @EnvironmentObject
                        ┌─────────▼──────────┐
                        │   GameViewModel    │   board state · timer · hints
-                       │  (@MainActor OO)   │   undo · settings · 14+ gate
+                       │  (@MainActor OO)   │   undo · daily streak · 14+ gate
                        └───┬───────────┬────┘
               ┌────────────▼──┐   ┌────▼─────────────┐
               │  SudokuEngine │   │   ScoreStore     │
@@ -112,7 +111,7 @@ sudokuapp/
 ### Build & run
 
 ```bash
-git clone https://github.com/alfredang/sudokuapp.git
+git clone https://github.com/Raboys/sudokuapp.git
 cd sudokuapp
 xcodegen generate            # creates SudokuApp.xcodeproj from project.yml
 open SudokuApp.xcodeproj      # ⌘R to run on a simulator or device
@@ -144,16 +143,19 @@ transmitted. See [`PrivacyInfo.xcprivacy`](SudokuApp/Support/PrivacyInfo.xcpriva
 
 ## License
 
-Released under the MIT License.
+The upstream README declares the project released under the MIT License. The upstream
+repository does not currently include the full `LICENSE` file, so redistribution terms must
+be confirmed before publishing PochiDoku.
 
 ## Developed By
 
-**Tertiary Infotech Pte. Ltd.**
+**Raboys**
 
 ## Acknowledgements
 
 - [XcodeGen](https://github.com/yonaskolb/XcodeGen) for project generation
 - Apple's [Human Interface Guidelines](https://developer.apple.com/design/human-interface-guidelines/) and SwiftUI
+- [Tertiary Sudoku](https://github.com/alfredang/sudokuapp), the original iOS project by Tertiary Infotech Pte. Ltd.
 - Original Android concept: [sudoku-mobile](https://github.com/alfredang/sudoku-mobile)
 
 ---

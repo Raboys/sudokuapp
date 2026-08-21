@@ -12,6 +12,8 @@ struct HomeView: View {
                 VStack(spacing: 24) {
                     header
 
+                    dailyChallengeCard
+
                     if viewModel.hasResumableGame {
                         continueCard
                     }
@@ -30,7 +32,7 @@ struct HomeView: View {
                 .padding(20)
             }
             .background(Color(.systemGroupedBackground))
-            .navigationTitle("Sudoku")
+            .navigationTitle("PochiDoku")
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button { showSettings = true } label: {
@@ -40,7 +42,53 @@ struct HomeView: View {
                 }
             }
             .sheet(isPresented: $showSettings) { SettingsView() }
+            .onAppear { viewModel.refreshDailyProgress() }
         }
+    }
+
+    private var dailyChallengeCard: some View {
+        Button { viewModel.startDailyChallenge() } label: {
+            HStack(spacing: 14) {
+                Image(systemName: viewModel.isTodayChallengeCompleted ? "checkmark.seal.fill" : "calendar")
+                    .font(.system(size: 28, weight: .semibold))
+                    .foregroundStyle(.white)
+                    .frame(width: 52, height: 52)
+                    .background(Color.accentColor, in: RoundedRectangle(cornerRadius: 14))
+
+                VStack(alignment: .leading, spacing: 3) {
+                    Text("Daily Challenge")
+                        .font(.headline)
+                        .foregroundStyle(.primary)
+                    Text(dailyChallengeSubtitle)
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                }
+
+                Spacer()
+
+                VStack(alignment: .trailing, spacing: 4) {
+                    Label("\(viewModel.dailyStreak)", systemImage: "pawprint.fill")
+                        .font(.headline.monospacedDigit())
+                        .foregroundStyle(.tint)
+                    Text("streak")
+                        .font(.caption2)
+                        .foregroundStyle(.secondary)
+                }
+            }
+            .padding(16)
+            .background(Color.accentColor.opacity(0.09), in: RoundedRectangle(cornerRadius: 18))
+            .overlay {
+                RoundedRectangle(cornerRadius: 18)
+                    .stroke(Color.accentColor.opacity(0.18), lineWidth: 1)
+            }
+        }
+        .buttonStyle(.plain)
+        .accessibilityHint("Starts today's shared Medium puzzle")
+    }
+
+    private var dailyChallengeSubtitle: String {
+        if viewModel.isTodayChallengeCompleted { return "Completed today · Play again" }
+        return "Medium · One shared puzzle"
     }
 
     private var header: some View {
@@ -85,7 +133,8 @@ struct HomeView: View {
     /// are coming back to before tapping.
     private var continueSubtitle: String {
         if let saved = viewModel.savedGameSummary {
-            return "\(saved.difficulty.title) · \(saved.elapsed)"
+            let kind = saved.isDaily ? "Daily" : saved.difficulty.title
+            return "\(kind) · \(saved.elapsed)"
         }
         return "Resume your game in progress"
     }

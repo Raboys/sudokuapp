@@ -10,10 +10,12 @@ struct CompletionView: View {
             Spacer()
 
             VStack(spacing: 12) {
-                Image(systemName: "checkmark.seal.fill")
-                    .font(.system(size: 72))
-                    .foregroundStyle(.tint)
-                Text("Solved!")
+                Image(systemName: "pawprint.fill")
+                    .font(.system(size: 42))
+                    .foregroundStyle(.white)
+                    .frame(width: 82, height: 82)
+                    .background(Color.accentColor, in: Circle())
+                Text(session?.isDailyChallenge == true ? "Daily complete!" : "Purr-fect!")
                     .font(.largeTitle.bold())
                 if let session {
                     Text("\(session.difficulty.title) puzzle")
@@ -25,9 +27,10 @@ struct CompletionView: View {
             if let session {
                 VStack(spacing: 0) {
                     ScoreBig(score: session.score)
+                    achievementSummary(session)
                     Divider().padding(.vertical, 4)
                     StatRow(label: "Time", value: session.formattedDuration, symbol: "clock")
-                    StatRow(label: "Hints used", value: "\(session.hintsUsed)", symbol: "lightbulb")
+                    StatRow(label: "Hints used", value: "\(session.hintsUsed)", symbol: "pawprint.fill")
                     StatRow(label: "Mistakes", value: "\(session.mistakes)", symbol: "xmark.circle")
                 }
                 .padding(20)
@@ -40,9 +43,15 @@ struct CompletionView: View {
             VStack(spacing: 12) {
                 if let session {
                     Button {
-                        viewModel.startNewGame(session.difficulty)
+                        if session.isDailyChallenge {
+                            viewModel.startDailyChallenge()
+                        } else {
+                            viewModel.startNewGame(session.difficulty)
+                        }
                     } label: {
-                        Text("Play again (\(session.difficulty.title))")
+                        Text(session.isDailyChallenge
+                             ? "Replay today's challenge"
+                             : "Play again (\(session.difficulty.title))")
                             .font(.headline)
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 14)
@@ -64,6 +73,25 @@ struct CompletionView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Color(.systemGroupedBackground))
+    }
+
+    @ViewBuilder
+    private func achievementSummary(_ session: GameSession) -> some View {
+        VStack(spacing: 8) {
+            if session.isDailyChallenge {
+                Label("\(viewModel.dailyStreak)-day streak", systemImage: "calendar.badge.checkmark")
+            }
+            if viewModel.lastWasPersonalBest {
+                Label("New personal best", systemImage: "star.fill")
+            }
+            if let percentile = viewModel.lastPersonalPercentile {
+                Text("Better than \(percentile)% of your \(session.difficulty.title.lowercased()) games")
+                    .multilineTextAlignment(.center)
+            }
+        }
+        .font(.subheadline.weight(.semibold))
+        .foregroundStyle(.tint)
+        .padding(.bottom, 8)
     }
 }
 

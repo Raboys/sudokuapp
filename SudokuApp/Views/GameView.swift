@@ -7,14 +7,19 @@ struct GameView: View {
     @State private var showQuitConfirm = false
 
     var body: some View {
-        VStack(spacing: 16) {
-            statusBar
+        VStack(spacing: 12) {
+            topBar
+                .padding(.horizontal, 16)
+            metricsBar
+                .padding(.horizontal, 16)
             boardArea
+                .padding(.horizontal, 2)
             Spacer(minLength: 0)
             actionRow
+                .padding(.horizontal, 8)
             NumberPad { viewModel.enter($0) }
+                .padding(.horizontal, 4)
         }
-        .padding(.horizontal, 16)
         .padding(.top, 8)
         .padding(.bottom, 12)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -28,42 +33,70 @@ struct GameView: View {
         }
     }
 
-    // MARK: Status bar
+    // MARK: Progress header
 
-    private var statusBar: some View {
+    private var topBar: some View {
         HStack {
             Button { showQuitConfirm = true } label: {
                 Image(systemName: "chevron.left").font(.headline)
             }
             .accessibilityLabel("Back")
 
-            Spacer()
-
-            Label(viewModel.difficulty.title, systemImage: viewModel.difficulty.symbol)
+            Label("Streak \(viewModel.dailyStreak)", systemImage: "pawprint.fill")
                 .font(.subheadline.weight(.semibold))
-                .foregroundStyle(viewModel.difficulty.tint)
+                .foregroundStyle(.tint)
 
             Spacer()
 
-            HStack(spacing: 14) {
-                if viewModel.mistakes > 0 || viewModel.limitMistakes {
-                    Label(mistakeText, systemImage: "xmark.circle")
-                        .font(.subheadline.monospacedDigit())
-                        .foregroundStyle(.red)
-                        .labelStyle(.titleAndIcon)
+            if viewModel.isDailyChallenge {
+                Label("Daily", systemImage: "calendar")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(.secondary)
+            }
+        }
+    }
+
+    private var metricsBar: some View {
+        HStack(alignment: .bottom, spacing: 8) {
+            metric(title: "Mistakes", value: "\(viewModel.mistakes)/\(viewModel.mistakeLimit)", color: .red)
+                .frame(maxWidth: .infinity, alignment: .leading)
+
+            VStack(spacing: 2) {
+                Text("Score: \(viewModel.liveScore)")
+                    .font(.headline.monospacedDigit())
+                    .foregroundStyle(.tint)
+                HStack(spacing: 4) {
+                    MiniCatMark(color: viewModel.difficulty.tint)
+                        .scaleEffect(0.68)
+                        .frame(width: 18, height: 17)
+                    Text(viewModel.difficulty.title)
+                        .font(.caption)
                 }
-                Button { viewModel.togglePause() } label: {
+                .foregroundStyle(.secondary)
+            }
+            .frame(maxWidth: .infinity)
+            .accessibilityElement(children: .combine)
+
+            Button { viewModel.togglePause() } label: {
+                VStack(alignment: .trailing, spacing: 2) {
+                    Text("Time")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
                     Label(viewModel.formattedElapsed,
                           systemImage: viewModel.isPaused ? "play.fill" : "pause.fill")
                         .font(.subheadline.monospacedDigit())
                         .foregroundStyle(.primary)
                 }
             }
+            .frame(maxWidth: .infinity, alignment: .trailing)
         }
     }
 
-    private var mistakeText: String {
-        viewModel.limitMistakes ? "\(viewModel.mistakes)/\(viewModel.mistakeLimit)" : "\(viewModel.mistakes)"
+    private func metric(title: String, value: String, color: Color) -> some View {
+        VStack(alignment: .leading, spacing: 2) {
+            Text(title).font(.caption).foregroundStyle(.secondary)
+            Text(value).font(.subheadline.monospacedDigit()).foregroundStyle(color)
+        }
     }
 
     // MARK: Board
@@ -71,8 +104,8 @@ struct GameView: View {
     private var boardArea: some View {
         ZStack {
             BoardView()
-                .padding(4)
-                .background(Color(.systemBackground), in: RoundedRectangle(cornerRadius: 8))
+                .padding(1)
+                .background(Color(.systemBackground), in: RoundedRectangle(cornerRadius: 4))
                 .blur(radius: viewModel.isPaused ? 14 : 0)
 
             if viewModel.isPaused {
@@ -96,11 +129,80 @@ struct GameView: View {
             ActionButton(title: "Notes",
                          symbol: viewModel.isNotesMode ? "pencil.circle.fill" : "pencil.circle",
                          highlighted: viewModel.isNotesMode) { viewModel.toggleNotesMode() }
-            ActionButton(title: "Hint", symbol: "lightbulb",
+            ActionButton(title: "Hint", symbol: "pawprint.fill",
+                         highlighted: true,
                          badge: viewModel.hintsUsed > 0 ? "\(viewModel.hintsUsed)" : nil) {
                 viewModel.useHint()
             }
         }
+    }
+}
+
+/// A tiny echo of the 14+ cat badge that keeps the game screen branded without
+/// competing with the board.
+private struct MiniCatMark: View {
+    let color: Color
+
+    var body: some View {
+        ZStack {
+            MiniCatEar()
+                .fill(color)
+                .frame(width: 9, height: 9)
+                .rotationEffect(.degrees(-9))
+                .offset(x: -7, y: -7)
+
+            MiniCatEar()
+                .fill(color)
+                .frame(width: 9, height: 9)
+                .rotationEffect(.degrees(9))
+                .offset(x: 7, y: -7)
+
+            Circle()
+                .fill(color)
+                .frame(width: 22, height: 22)
+
+            HStack(spacing: 6) {
+                Capsule().frame(width: 2, height: 4)
+                Capsule().frame(width: 2, height: 4)
+            }
+            .foregroundStyle(.white.opacity(0.88))
+            .offset(y: -2)
+
+            CatSmile()
+                .stroke(.white.opacity(0.82), style: StrokeStyle(lineWidth: 1, lineCap: .round))
+                .frame(width: 8, height: 4)
+                .offset(y: 5)
+        }
+        .frame(width: 26, height: 24)
+        .accessibilityHidden(true)
+    }
+}
+
+private struct MiniCatEar: Shape {
+    func path(in rect: CGRect) -> Path {
+        var path = Path()
+        path.move(to: CGPoint(x: rect.midX, y: rect.minY))
+        path.addLine(to: CGPoint(x: rect.maxX, y: rect.maxY))
+        path.addLine(to: CGPoint(x: rect.minX, y: rect.maxY))
+        path.closeSubpath()
+        return path
+    }
+}
+
+private struct CatSmile: Shape {
+    func path(in rect: CGRect) -> Path {
+        var path = Path()
+        path.move(to: CGPoint(x: rect.midX, y: rect.minY))
+        path.addQuadCurve(
+            to: CGPoint(x: rect.minX, y: rect.midY),
+            control: CGPoint(x: rect.width * 0.35, y: rect.maxY)
+        )
+        path.move(to: CGPoint(x: rect.midX, y: rect.minY))
+        path.addQuadCurve(
+            to: CGPoint(x: rect.maxX, y: rect.midY),
+            control: CGPoint(x: rect.width * 0.65, y: rect.maxY)
+        )
+        return path
     }
 }
 

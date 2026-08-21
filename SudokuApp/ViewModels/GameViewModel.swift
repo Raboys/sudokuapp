@@ -32,17 +32,23 @@ final class GameViewModel: ObservableObject {
     @Published private(set) var hintsUsed = 0
     @Published private(set) var elapsedSeconds = 0
     @Published private(set) var isPaused = false
+    @Published private(set) var activeChallengeID: String?
+
+    // MARK: Daily engagement
+    @Published private(set) var dailyStreak = 0
+    @Published private(set) var isTodayChallengeCompleted = false
 
     // MARK: Settings (persisted)
     @Published var highlightConflicts: Bool { didSet { defaults.set(highlightConflicts, forKey: Keys.highlightConflicts) } }
     @Published var highlightSameNumber: Bool { didSet { defaults.set(highlightSameNumber, forKey: Keys.highlightSameNumber) } }
     @Published var autoRemoveNotes: Bool { didSet { defaults.set(autoRemoveNotes, forKey: Keys.autoRemoveNotes) } }
-    @Published var limitMistakes: Bool { didSet { defaults.set(limitMistakes, forKey: Keys.limitMistakes) } }
 
     let mistakeLimit = 3
 
     // MARK: Stored result of the last finished game (for CompletionView)
     @Published private(set) var lastSession: GameSession?
+    @Published private(set) var lastPersonalPercentile: Int?
+    @Published private(set) var lastWasPersonalBest = false
 
     private let store = ScoreStore()
     private let defaults = UserDefaults.standard
@@ -54,16 +60,15 @@ final class GameViewModel: ObservableObject {
         static let highlightConflicts = "SudokuApp.highlightConflicts"
         static let highlightSameNumber = "SudokuApp.highlightSameNumber"
         static let autoRemoveNotes = "SudokuApp.autoRemoveNotes"
-        static let limitMistakes = "SudokuApp.limitMistakes"
     }
 
     init() {
         isAgeConfirmed = defaults.bool(forKey: Keys.ageConfirmed)
-        // Settings default to ON (except the optional mistake limit).
+        // Assistance defaults to ON.
         highlightConflicts = defaults.object(forKey: Keys.highlightConflicts) as? Bool ?? true
         highlightSameNumber = defaults.object(forKey: Keys.highlightSameNumber) as? Bool ?? true
         autoRemoveNotes = defaults.object(forKey: Keys.autoRemoveNotes) as? Bool ?? true
-        limitMistakes = defaults.object(forKey: Keys.limitMistakes) as? Bool ?? false
+        refreshDailyProgress()
     }
 
     // MARK: - Derived state
@@ -71,15 +76,30 @@ final class GameViewModel: ObservableObject {
     var hasResumableGame: Bool { store.loadActiveGame() != nil }
 
     /// Difficulty and elapsed time of the saved game, for the home screen's Continue card.
-    var savedGameSummary: (difficulty: Difficulty, elapsed: String)? {
+    var savedGameSummary: (difficulty: Difficulty, elapsed: String, isDaily: Bool)? {
         guard let game = store.loadActiveGame() else { return nil }
         let m = game.elapsedSeconds / 60, s = game.elapsedSeconds % 60
-        return (game.difficulty, String(format: "%02d:%02d", m, s))
+        return (game.difficulty, String(format: "%02d:%02d", m, s), game.challengeID != nil)
     }
 
     var isGiven: [Bool] { puzzle.map { $0 != 0 } }
 
     var isSolved: Bool { values == solution }
+
+    var isDailyChallenge: Bool { activeChallengeID != nil }
+
+    var todayChallengeID: String { ScoreStore.dayID() }
+
+    var liveScore: Int {
+        ScoreCalculator.liveScore(
+            difficulty: difficulty,
+            puzzle: puzzle,
+            values: values,
+            solution: solution,
+            hintsUsed: hintsUsed,
+            mistakes: mistakes
+        )
+    }
 
     /// Remaining count for each digit 1...9 (how many still to place on the board).
     func remaining(for digit: Int) -> Int {
@@ -101,6 +121,31 @@ final class GameViewModel: ObservableObject {
 
     func startNewGame(_ difficulty: Difficulty) {
         let generated = SudokuEngine.generatePuzzle(targetClues: difficulty.targetClues)
+        beginGame(difficulty: difficulty, generated: generated, challengeID: nil)
+    }
+
+    func startDailyChallenge() {
+        refreshDailyProgress()
+        let challengeID = todayChallengeID
+        if let saved = store.loadActiveGame(), saved.challengeID == challengeID {
+            resumeSavedGame()
+            return
+        }
+
+        let difficulty = Difficulty.medium
+        let generated = SudokuEngine.generatePuzzle(
+            targetClues: difficulty.targetClues,
+            seed: ScoreStore.challengeSeed(for: challengeID)
+        )
+        beginGame(difficulty: difficulty, generated: generated, challengeID: challengeID)
+    }
+
+    private func beginGame(
+        difficulty: Difficulty,
+        generated: (puzzle: [Int], solution: [Int], clues: Int),
+        challengeID: String?
+    ) {
+        stopTimer()
         self.difficulty = difficulty
         puzzle = generated.puzzle
         solution = generated.solution
@@ -112,7 +157,11 @@ final class GameViewModel: ObservableObject {
         hintsUsed = 0
         elapsedSeconds = 0
         isPaused = false
+        activeChallengeID = challengeID
         undoStack.removeAll()
+        lastSession = nil
+        lastPersonalPercentile = nil
+        lastWasPersonalBest = false
         screen = .game
         persistActiveGame()
         startTimer()
@@ -120,6 +169,7 @@ final class GameViewModel: ObservableObject {
 
     func resumeSavedGame() {
         guard let game = store.loadActiveGame() else { return }
+        stopTimer()
         difficulty = game.difficulty
         puzzle = game.puzzle
         solution = game.solution
@@ -131,6 +181,7 @@ final class GameViewModel: ObservableObject {
         hintsUsed = game.hintsUsed
         elapsedSeconds = game.elapsedSeconds
         isPaused = false
+        activeChallengeID = game.challengeID
         undoStack.removeAll()
         screen = .game
         startTimer()
@@ -165,7 +216,7 @@ final class GameViewModel: ObservableObject {
             } else {
                 values[idx] = digit
                 notes[idx].removeAll()
-                registerMistakeIfNeeded(at: idx, digit: digit)
+                if registerMistakeIfNeeded(at: idx, digit: digit) { return }
                 if autoRemoveNotes { pruneNotes(around: idx, digit: digit) }
                 if digit == solution[idx] { hapticTap() }
             }
@@ -224,29 +275,43 @@ final class GameViewModel: ObservableObject {
                                           seconds: elapsedSeconds,
                                           hintsUsed: hintsUsed,
                                           mistakes: mistakes)
+        lastPersonalPercentile = store.personalPercentile(score: score, difficulty: difficulty)
+        lastWasPersonalBest = store.isPersonalBest(score: score, difficulty: difficulty)
         let session = GameSession(difficulty: difficulty,
                                   date: Date(),
                                   durationSeconds: elapsedSeconds,
                                   hintsUsed: hintsUsed,
                                   mistakes: mistakes,
-                                  score: score)
+                                  score: score,
+                                  challengeID: activeChallengeID)
         store.save(session)
+        if let challengeID = activeChallengeID {
+            dailyStreak = store.markDailyCompleted(challengeID)
+            isTodayChallengeCompleted = challengeID == todayChallengeID
+        }
         store.clearActiveGame()
         lastSession = session
         screen = .completion
     }
 
-    private func registerMistakeIfNeeded(at idx: Int, digit: Int) {
-        guard digit != solution[idx] else { return }
+    /// Returns `true` when the third strike ended the game.
+    private func registerMistakeIfNeeded(at idx: Int, digit: Int) -> Bool {
+        guard digit != solution[idx] else { return false }
         mistakes += 1
         UINotificationFeedbackGenerator().notificationOccurred(.error)
-        if limitMistakes && mistakes >= mistakeLimit {
+        if mistakes >= mistakeLimit {
             stopTimer()
+            store.clearActiveGame()
+            selectedIndex = nil
+            activeChallengeID = nil
+            screen = .home
             activeAlert = GameAlert(
                 title: "Out of moves",
-                message: "You reached \(mistakeLimit) mistakes. Start a new game to try again."
+                message: "You reached \(mistakeLimit) mistakes. The puzzle has ended — try another one."
             )
+            return true
         }
+        return false
     }
 
     private func firstUnsolvedIndex() -> Int? {
@@ -279,9 +344,15 @@ final class GameViewModel: ObservableObject {
             notes: notes.map { Array($0).sorted() },
             elapsedSeconds: elapsedSeconds,
             mistakes: mistakes,
-            hintsUsed: hintsUsed
+            hintsUsed: hintsUsed,
+            challengeID: activeChallengeID
         )
         store.saveActiveGame(game)
+    }
+
+    func refreshDailyProgress() {
+        dailyStreak = store.currentStreak()
+        isTodayChallengeCompleted = store.isDailyCompleted(todayChallengeID)
     }
 
     // MARK: - Timer
@@ -315,6 +386,7 @@ final class GameViewModel: ObservableObject {
         case "game", "completion":
             startNewGame(.medium)
             stopTimerForScreenshot()
+            dailyStreak = 13
             // Fill a deterministic ~65% of the non-given cells with correct values for a
             // lived-in board, leaving the rest blank.
             for i in 0..<81 where !isGiven[i] && i % 3 != 0 {
@@ -329,13 +401,24 @@ final class GameViewModel: ObservableObject {
             hintsUsed = 1
             mistakes = 1
             if key == "completion" {
+                activeChallengeID = todayChallengeID
                 let s = GameSession(difficulty: .medium, date: Date(),
                                     durationSeconds: 222, hintsUsed: 1, mistakes: 1,
-                                    score: ScoreCalculator.score(difficulty: .medium, seconds: 222, hintsUsed: 1, mistakes: 1))
+                                    score: ScoreCalculator.score(difficulty: .medium, seconds: 222, hintsUsed: 1, mistakes: 1),
+                                    challengeID: todayChallengeID)
                 lastSession = s
+                lastPersonalPercentile = 78
+                lastWasPersonalBest = true
                 screen = .completion
             }
         default:
+            let calendar = Calendar.autoupdatingCurrent
+            for offset in 1...13 {
+                if let date = calendar.date(byAdding: .day, value: -offset, to: Date()) {
+                    store.markDailyCompleted(ScoreStore.dayID(for: date, calendar: calendar))
+                }
+            }
+            refreshDailyProgress()
             screen = .home
         }
     }

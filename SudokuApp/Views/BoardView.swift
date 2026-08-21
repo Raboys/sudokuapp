@@ -87,7 +87,7 @@ private struct CellView: View {
             background
             if value != 0 {
                 Text("\(value)")
-                    .font(.system(size: size * 0.55, weight: isGiven ? .bold : .regular, design: .rounded))
+                    .font(.system(size: size * 0.62, weight: .regular, design: .rounded))
                     .foregroundStyle(textColor)
             } else if !notes.isEmpty {
                 notesGrid
