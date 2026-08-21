@@ -306,8 +306,11 @@ final class GameViewModel: ObservableObject {
             activeChallengeID = nil
             screen = .home
             activeAlert = GameAlert(
-                title: "Out of moves",
-                message: "You reached \(mistakeLimit) mistakes. The puzzle has ended — try another one."
+                title: L10n.text("Out of moves"),
+                message: L10n.format(
+                    "You reached %d mistakes. The puzzle has ended — try another one.",
+                    mistakeLimit
+                )
             )
             return true
         }

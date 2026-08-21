@@ -15,6 +15,14 @@ on:
           - home
           - game
           - completion
+      locale:
+        description: App language to capture
+        required: true
+        default: es-AR
+        type: choice
+        options:
+          - es-AR
+          - en
 
 permissions:
   contents: read
@@ -44,6 +52,8 @@ jobs:
         run: |
           set -x
           SCREENSHOT_SCREEN="${{ inputs.screen || 'game' }}"
+          SCREENSHOT_LOCALE="${{ inputs.locale || 'es-AR' }}"
+          APPLE_LOCALE="${SCREENSHOT_LOCALE//-/_}"
           DEVICE_ID=$(xcrun simctl list devices available --json | jq -r \
             '[.devices[] | .[] | select(.name | startswith("iPhone"))][0].udid // empty')
 
@@ -96,7 +106,9 @@ jobs:
           for ((launch_attempt = 1; launch_attempt <= 2; launch_attempt++)); do
             LAUNCH_LOG="$RUNNER_TEMP/simctl-launch-$launch_attempt.log"
             SIMCTL_CHILD_SUDOKU_SCREENSHOT="$SCREENSHOT_SCREEN" xcrun simctl launch --terminate-running-process \
-              "$DEVICE_ID" com.raboys.pochidoku >"$LAUNCH_LOG" 2>&1 &
+              "$DEVICE_ID" com.raboys.pochidoku \
+              -AppleLanguages "($SCREENSHOT_LOCALE)" \
+              -AppleLocale "$APPLE_LOCALE" >"$LAUNCH_LOG" 2>&1 &
             LAUNCH_COMMAND_PID=$!
 
             for ((poll_attempt = 1; poll_attempt <= 75; poll_attempt++)); do
@@ -128,7 +140,8 @@ jobs:
           sleep 8
 
           mkdir -p artifacts/screenshots
-          xcrun simctl io "$DEVICE_ID" screenshot "artifacts/screenshots/pochidoku-$SCREENSHOT_SCREEN.png"
+          xcrun simctl io "$DEVICE_ID" screenshot \
+            "artifacts/screenshots/pochidoku-$SCREENSHOT_SCREEN-$SCREENSHOT_LOCALE.png"
 
       - name: Upload screenshots
         if: always()

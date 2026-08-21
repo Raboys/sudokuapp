@@ -1,0 +1,107 @@
+/* Dificultad */
+"Easy" = "Fácil";
+"Medium" = "Media";
+"Hard" = "Difícil";
+"Expert" = "Experta";
+"Gentle warm-up" = "Un comienzo tranquilo";
+"A balanced challenge" = "Un desafío equilibrado";
+"For seasoned solvers" = "Para jugadores con experiencia";
+"Ruthless. Good luck." = "Sin piedad. Buena suerte.";
+
+/* Confirmación de edad */
+"This app is intended for players aged 14 and over." = "Esta app está pensada para jugadores de 14 años o más.";
+"I am 14 or older" = "Tengo 14 años o más";
+"A quick confirmation is all that's needed — no ID and no verification." = "Solo hace falta una confirmación rápida: sin documento ni verificación.";
+
+/* Pestañas e inicio */
+"Home" = "Inicio";
+"Stats" = "Estadísticas";
+"Feedback" = "Comentarios";
+"About" = "Acerca de";
+"New Game" = "Nueva partida";
+"Settings" = "Configuración";
+"Daily Challenge" = "Reto diario";
+"streak" = "racha";
+"Starts today's shared Medium puzzle" = "Inicia el sudoku compartido de dificultad media de hoy";
+"Completed today · Play again" = "Completado hoy · Jugá de nuevo";
+"Medium · One shared puzzle" = "Media · Un sudoku compartido";
+"Train your brain, one grid at a time." = "Entrená tu mente, un tablero a la vez.";
+"Continue" = "Continuar";
+"Daily" = "Diario";
+"%@ · %@" = "%@ · %@";
+"Resume your game in progress" = "Retomá tu partida en curso";
+
+/* Partida */
+"Leave this game?" = "¿Salir de esta partida?";
+"Save & Quit" = "Guardar y salir";
+"Keep Playing" = "Seguir jugando";
+"Your progress is saved so you can continue later." = "Tu progreso queda guardado para que puedas continuar más tarde.";
+"Back" = "Volver";
+"Streak %d" = "Racha: %d";
+"Mistakes" = "Errores";
+"Score: %d" = "Puntaje: %d";
+"Time" = "Tiempo";
+"Paused" = "En pausa";
+"Resume" = "Reanudar";
+"Undo" = "Deshacer";
+"Erase" = "Borrar";
+"Notes" = "Notas";
+"Hint" = "Pista";
+"Out of moves" = "Sin más intentos";
+"You reached %d mistakes. The puzzle has ended — try another one." = "Llegaste a %d errores. La partida terminó; probá con otra.";
+
+/* Resultado */
+"Daily complete!" = "¡Reto diario completado!";
+"Purr-fect!" = "¡Perfecto!";
+"%@ puzzle" = "Sudoku de dificultad %@";
+"Hints used" = "Pistas usadas";
+"Replay today's challenge" = "Volver a jugar el reto de hoy";
+"Play again (%@)" = "Jugar de nuevo (%@)";
+"%d-day streak" = "Racha de %d días";
+"New personal best" = "Nuevo récord personal";
+"Better than %d%% of your %@ games" = "Mejor que el %d%% de tus partidas de dificultad %@";
+"POINTS" = "PUNTOS";
+
+/* Estadísticas */
+"Overview" = "Resumen";
+"Games solved" = "Partidas resueltas";
+"Best score" = "Mejor puntaje";
+"Total score" = "Puntaje total";
+"Daily streak" = "Racha diaria";
+"Daily challenges" = "Retos diarios";
+"Best time" = "Mejor tiempo";
+"History" = "Historial";
+"No games yet" = "Todavía no hay partidas";
+"Solve a puzzle and your scores will appear here." = "Resolvé un sudoku y tus puntajes aparecerán acá.";
+"Statistics" = "Estadísticas";
+"Clear history" = "Borrar historial";
+"Clear all history?" = "¿Borrar todo el historial?";
+"Delete All" = "Borrar todo";
+"Cancel" = "Cancelar";
+"Daily · %@" = "Diario · %@";
+
+/* Configuración */
+"Assistance" = "Ayudas";
+"Highlight conflicts" = "Resaltar conflictos";
+"Highlight same number" = "Resaltar números iguales";
+"Auto-remove pencil marks" = "Borrar notas automáticamente";
+"Challenge" = "Desafío";
+"Mistake limit" = "Límite de errores";
+"Daily challenges, streaks, scores, and personal comparisons stay on this iPhone." = "Los retos diarios, las rachas, los puntajes y las comparaciones personales quedan en este iPhone.";
+"Version" = "Versión";
+"Age rating" = "Clasificación por edad";
+"Sudoku puzzles are generated on your device with a guaranteed unique solution. Scores and history are stored only on this iPhone and never leave it." = "Los sudokus se generan en tu dispositivo con una solución única garantizada. Los puntajes y el historial se guardan solo en este iPhone y nunca salen de él.";
+"Done" = "Listo";
+
+/* Comentarios */
+"Found a bug, or have an idea for the game? We'd love to hear it." = "¿Encontraste un error o tenés una idea para el juego? Nos encantaría saberlo.";
+"Title" = "Título";
+"Your message…" = "Tu mensaje…";
+"Send via WhatsApp" = "Enviar por WhatsApp";
+
+/* Acerca de */
+"A clean, classic Sudoku for iPhone. Every puzzle is generated on your device with a guaranteed unique solution, including a new daily challenge. Live scores, streaks, times, and history stay only on this iPhone and never leave it." = "Un sudoku clásico y limpio para iPhone. Cada partida se genera en tu dispositivo con una solución única garantizada, incluido un nuevo reto diario. Los puntajes, las rachas, los tiempos y el historial quedan solo en este iPhone y nunca salen de él.";
+"DEVELOPER" = "DESARROLLADOR";
+"Open-source project" = "Proyecto de código abierto";
+"Age guidance" = "Edad recomendada";
+"OK" = "Aceptar";

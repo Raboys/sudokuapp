@@ -1,0 +1,107 @@
+/* Difficulty */
+"Easy" = "Easy";
+"Medium" = "Medium";
+"Hard" = "Hard";
+"Expert" = "Expert";
+"Gentle warm-up" = "Gentle warm-up";
+"A balanced challenge" = "A balanced challenge";
+"For seasoned solvers" = "For seasoned solvers";
+"Ruthless. Good luck." = "Ruthless. Good luck.";
+
+/* Age gate */
+"This app is intended for players aged 14 and over." = "This app is intended for players aged 14 and over.";
+"I am 14 or older" = "I am 14 or older";
+"A quick confirmation is all that's needed — no ID and no verification." = "A quick confirmation is all that's needed — no ID and no verification.";
+
+/* Tabs and home */
+"Home" = "Home";
+"Stats" = "Stats";
+"Feedback" = "Feedback";
+"About" = "About";
+"New Game" = "New Game";
+"Settings" = "Settings";
+"Daily Challenge" = "Daily Challenge";
+"streak" = "streak";
+"Starts today's shared Medium puzzle" = "Starts today's shared Medium puzzle";
+"Completed today · Play again" = "Completed today · Play again";
+"Medium · One shared puzzle" = "Medium · One shared puzzle";
+"Train your brain, one grid at a time." = "Train your brain, one grid at a time.";
+"Continue" = "Continue";
+"Daily" = "Daily";
+"%@ · %@" = "%@ · %@";
+"Resume your game in progress" = "Resume your game in progress";
+
+/* Game */
+"Leave this game?" = "Leave this game?";
+"Save & Quit" = "Save & Quit";
+"Keep Playing" = "Keep Playing";
+"Your progress is saved so you can continue later." = "Your progress is saved so you can continue later.";
+"Back" = "Back";
+"Streak %d" = "Streak %d";
+"Mistakes" = "Mistakes";
+"Score: %d" = "Score: %d";
+"Time" = "Time";
+"Paused" = "Paused";
+"Resume" = "Resume";
+"Undo" = "Undo";
+"Erase" = "Erase";
+"Notes" = "Notes";
+"Hint" = "Hint";
+"Out of moves" = "Out of moves";
+"You reached %d mistakes. The puzzle has ended — try another one." = "You reached %d mistakes. The puzzle has ended — try another one.";
+
+/* Completion */
+"Daily complete!" = "Daily complete!";
+"Purr-fect!" = "Purr-fect!";
+"%@ puzzle" = "%@ puzzle";
+"Hints used" = "Hints used";
+"Replay today's challenge" = "Replay today's challenge";
+"Play again (%@)" = "Play again (%@)";
+"%d-day streak" = "%d-day streak";
+"New personal best" = "New personal best";
+"Better than %d%% of your %@ games" = "Better than %d%% of your %@ games";
+"POINTS" = "POINTS";
+
+/* Statistics */
+"Overview" = "Overview";
+"Games solved" = "Games solved";
+"Best score" = "Best score";
+"Total score" = "Total score";
+"Daily streak" = "Daily streak";
+"Daily challenges" = "Daily challenges";
+"Best time" = "Best time";
+"History" = "History";
+"No games yet" = "No games yet";
+"Solve a puzzle and your scores will appear here." = "Solve a puzzle and your scores will appear here.";
+"Statistics" = "Statistics";
+"Clear history" = "Clear history";
+"Clear all history?" = "Clear all history?";
+"Delete All" = "Delete All";
+"Cancel" = "Cancel";
+"Daily · %@" = "Daily · %@";
+
+/* Settings */
+"Assistance" = "Assistance";
+"Highlight conflicts" = "Highlight conflicts";
+"Highlight same number" = "Highlight same number";
+"Auto-remove pencil marks" = "Auto-remove pencil marks";
+"Challenge" = "Challenge";
+"Mistake limit" = "Mistake limit";
+"Daily challenges, streaks, scores, and personal comparisons stay on this iPhone." = "Daily challenges, streaks, scores, and personal comparisons stay on this iPhone.";
+"Version" = "Version";
+"Age rating" = "Age rating";
+"Sudoku puzzles are generated on your device with a guaranteed unique solution. Scores and history are stored only on this iPhone and never leave it." = "Sudoku puzzles are generated on your device with a guaranteed unique solution. Scores and history are stored only on this iPhone and never leave it.";
+"Done" = "Done";
+
+/* Feedback */
+"Found a bug, or have an idea for the game? We'd love to hear it." = "Found a bug, or have an idea for the game? We'd love to hear it.";
+"Title" = "Title";
+"Your message…" = "Your message…";
+"Send via WhatsApp" = "Send via WhatsApp";
+
+/* About */
+"A clean, classic Sudoku for iPhone. Every puzzle is generated on your device with a guaranteed unique solution, including a new daily challenge. Live scores, streaks, times, and history stay only on this iPhone and never leave it." = "A clean, classic Sudoku for iPhone. Every puzzle is generated on your device with a guaranteed unique solution, including a new daily challenge. Live scores, streaks, times, and history stay only on this iPhone and never leave it.";
+"DEVELOPER" = "DEVELOPER";
+"Open-source project" = "Open-source project";
+"Age guidance" = "Age guidance";
+"OK" = "OK";

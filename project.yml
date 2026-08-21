@@ -2,6 +2,7 @@ name: SudokuApp
 
 options:
   bundleIdPrefix: com.raboys
+  developmentLanguage: en
   deploymentTarget:
     iOS: "16.0"
   createIntermediateGroups: true

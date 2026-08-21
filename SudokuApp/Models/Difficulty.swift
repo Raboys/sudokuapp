@@ -12,19 +12,19 @@ enum Difficulty: String, CaseIterable, Codable, Identifiable {
 
     var title: String {
         switch self {
-        case .easy:   return "Easy"
-        case .medium: return "Medium"
-        case .hard:   return "Hard"
-        case .expert: return "Expert"
+        case .easy:   return L10n.text("Easy")
+        case .medium: return L10n.text("Medium")
+        case .hard:   return L10n.text("Hard")
+        case .expert: return L10n.text("Expert")
         }
     }
 
     var subtitle: String {
         switch self {
-        case .easy:   return "Gentle warm-up"
-        case .medium: return "A balanced challenge"
-        case .hard:   return "For seasoned solvers"
-        case .expert: return "Ruthless. Good luck."
+        case .easy:   return L10n.text("Gentle warm-up")
+        case .medium: return L10n.text("A balanced challenge")
+        case .hard:   return L10n.text("For seasoned solvers")
+        case .expert: return L10n.text("Ruthless. Good luck.")
         }
     }
 
