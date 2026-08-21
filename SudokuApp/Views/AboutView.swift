@@ -18,7 +18,7 @@ struct AboutView: View {
                     // App card
                     VStack(alignment: .leading, spacing: 10) {
                         HStack(spacing: 12) {
-                            Image(systemName: "square.grid.3x3.fill")
+                            Image(systemName: "cat.fill")
                                 .font(.system(size: 34))
                                 .foregroundStyle(.tint)
                             Text("PochiDoku")

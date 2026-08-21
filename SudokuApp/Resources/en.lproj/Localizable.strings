@@ -3,10 +3,10 @@
 "Medium" = "Medium";
 "Hard" = "Hard";
 "Expert" = "Expert";
-"Gentle warm-up" = "Gentle warm-up";
-"A balanced challenge" = "A balanced challenge";
-"For seasoned solvers" = "For seasoned solvers";
-"Ruthless. Good luck." = "Ruthless. Good luck.";
+"Stretch your paws" = "Stretch your paws";
+"Pochi starts to prowl" = "Pochi starts to prowl";
+"Claws out" = "Claws out";
+"Pochi's territory. No mercy." = "Pochi's territory. No mercy.";
 
 /* Age gate */
 "This app is intended for players aged 14 and over." = "This app is intended for players aged 14 and over.";
@@ -25,7 +25,7 @@
 "Starts today's shared Medium puzzle" = "Starts today's shared Medium puzzle";
 "Completed today · Play again" = "Completed today · Play again";
 "Medium · One shared puzzle" = "Medium · One shared puzzle";
-"Train your brain, one grid at a time." = "Train your brain, one grid at a time.";
+"Nine lives. Nine numbers. One Pochi." = "Nine lives. Nine numbers. One Pochi.";
 "Continue" = "Continue";
 "Daily" = "Daily";
 "%@ · %@" = "%@ · %@";

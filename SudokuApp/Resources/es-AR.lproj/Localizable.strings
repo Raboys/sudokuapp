@@ -3,10 +3,10 @@
 "Medium" = "Media";
 "Hard" = "Difícil";
 "Expert" = "Experta";
-"Gentle warm-up" = "Un comienzo tranquilo";
-"A balanced challenge" = "Un desafío equilibrado";
-"For seasoned solvers" = "Para jugadores con experiencia";
-"Ruthless. Good luck." = "Sin piedad. Buena suerte.";
+"Stretch your paws" = "Para desperezar las patitas";
+"Pochi starts to prowl" = "Pochi empieza a acechar";
+"Claws out" = "Sacá las garritas";
+"Pochi's territory. No mercy." = "Territorio de Pochi. Sin piedad.";
 
 /* Confirmación de edad */
 "This app is intended for players aged 14 and over." = "Esta app está pensada para jugadores de 14 años o más.";
@@ -25,7 +25,7 @@
 "Starts today's shared Medium puzzle" = "Inicia el sudoku compartido de dificultad media de hoy";
 "Completed today · Play again" = "Completado hoy · Jugá de nuevo";
 "Medium · One shared puzzle" = "Media · Un sudoku compartido";
-"Train your brain, one grid at a time." = "Entrená tu mente, un tablero a la vez.";
+"Nine lives. Nine numbers. One Pochi." = "Nueve vidas. Nueve números. Un solo Pochi.";
 "Continue" = "Continuar";
 "Daily" = "Diario";
 "%@ · %@" = "%@ · %@";
