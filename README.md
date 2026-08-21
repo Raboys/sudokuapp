@@ -51,6 +51,10 @@ and private — scores, streaks, and history never leave your phone. For ages **
 | 🔢 14+ age gate | One‑time, one‑tap age confirmation on first launch — no ID, no verification |
 | 🔒 Private & offline | No network, no permissions, no tracking |
 
+The product rules behind scoring, daily challenges, streaks, personal
+comparisons, and the deferred global percentile are documented in
+[`ENGAGEMENT.md`](ENGAGEMENT.md).
+
 ## Tech Stack
 
 | Category | Technology |
